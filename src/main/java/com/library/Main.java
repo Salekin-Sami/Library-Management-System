@@ -1,6 +1,6 @@
 package com.library;
 
-import com.library.service.BookService;
+import com.library.service.AuthService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,14 +11,17 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Add classic books
-        BookService bookService = new BookService();
-        bookService.addClassicBooks();
+        // Create test admin account
+        AuthService authService = new AuthService();
+        try {
+            authService.createTestAdmin();
+        } catch (Exception e) {
+            System.err.println("Failed to create test admin account: " + e.getMessage());
+        }
 
-        // Load the main FXML
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
-        primaryStage.setTitle("Library Management System");
-        primaryStage.setScene(new Scene(root, 1200, 800));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+        primaryStage.setTitle("Library Management System - Login");
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 

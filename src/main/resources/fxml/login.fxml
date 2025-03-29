@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="com.library.controller.LoginController"
+      spacing="10" styleClass="login-container">
+    
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+    
+    <Label text="Library Management System" styleClass="title-label"/>
+    
+    <VBox spacing="5">
+        <Label text="Email:" styleClass="field-label"/>
+        <TextField fx:id="emailField" promptText="Enter your email"/>
+    </VBox>
+    
+    <VBox spacing="5">
+        <Label text="Password:" styleClass="field-label"/>
+        <PasswordField fx:id="passwordField" promptText="Enter your password"/>
+    </VBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <CheckBox fx:id="rememberMeCheckbox" text="Remember Me"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Hyperlink text="Forgot Password?" onAction="#handleForgotPassword"/>
+    </HBox>
+    
+    <Button text="Login" onAction="#handleLogin" styleClass="login-button"/>
+    <Button text="Register" onAction="#handleRegister" styleClass="register-button"/>
+    
+    <Label fx:id="messageLabel" styleClass="message-label"/>
+</VBox>

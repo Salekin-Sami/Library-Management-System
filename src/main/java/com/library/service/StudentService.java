@@ -38,20 +38,11 @@ public class StudentService {
         }
     }
 
-    public void deleteStudent(Long studentId) {
-        Transaction transaction = null;
+    public void deleteStudent(Student student) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Student student = session.get(Student.class, studentId);
-            if (student != null) {
-                session.remove(student);
-            }
+            Transaction transaction = session.beginTransaction();
+            session.delete(student);
             transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
         }
     }
 
@@ -100,6 +91,19 @@ public class StudentService {
                     "from Student where studentId = :studentId", Student.class);
             query.setParameter("studentId", studentId);
             return query.uniqueResult();
+        }
+    }
+
+    public List<Student> searchStudents(String searchTerm) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Student> query = session.createQuery(
+                    "FROM Student s WHERE " +
+                            "LOWER(s.name) LIKE LOWER(:searchTerm) OR " +
+                            "LOWER(s.email) LIKE LOWER(:searchTerm) OR " +
+                            "LOWER(s.studentId) LIKE LOWER(:searchTerm)",
+                    Student.class);
+            query.setParameter("searchTerm", "%" + searchTerm + "%");
+            return query.getResultList();
         }
     }
 }

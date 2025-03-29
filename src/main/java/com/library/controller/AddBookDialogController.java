@@ -43,6 +43,12 @@ public class AddBookDialogController {
         this.searchResults = FXCollections.observableArrayList();
     }
 
+    /**
+     * Initializes the AddBookDialogController by setting up the table columns,
+     * binding the search results to the resultsTable, and configuring the
+     * visibility of the addBookButton based on the selection in the resultsTable.
+     */
+
     @FXML
     public void initialize() {
         setupTableColumns();

@@ -321,11 +321,11 @@
 }
 
 .light-theme .table-view .column-header {
+    -fx-padding: 12 15;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
     -fx-background-color: #2a9d8f;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 13px;
-    -fx-padding: 12 15;
 }
 
 .light-theme .table-view .table-row-cell {
@@ -353,11 +353,11 @@
 }
 
 .dark-theme .table-view .column-header {
+    -fx-padding: 12 15;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
     -fx-background-color: #2a9d8f;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 13px;
-    -fx-padding: 12 15;
 }
 
 .dark-theme .table-view .table-row-cell {
@@ -628,7 +628,7 @@
     -fx-border-color: #2a9d8f;
     -fx-padding: 15;
     -fx-font-weight: bold;
-    -fx-text-fill: #e9c46a;
+    -fx-text-fill: white;
     -fx-font-size: 13px;
 }
 

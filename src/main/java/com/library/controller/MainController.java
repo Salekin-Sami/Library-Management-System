@@ -21,6 +21,8 @@ import java.io.IOException;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.VBox;
+import com.library.model.User;
+import java.util.prefs.Preferences;
 
 public class MainController {
     private final BookService bookService;
@@ -28,6 +30,7 @@ public class MainController {
     private final BorrowingService borrowingService;
     private final BookApiService bookApiService;
     private boolean isDarkTheme = false;
+    private User currentUser;
 
     @FXML
     private TableView<Book> booksTable;
@@ -89,6 +92,9 @@ public class MainController {
     @FXML
     private VBox root;
 
+    @FXML
+    private Label welcomeLabel;
+
     public MainController() {
         this.bookService = new BookService();
         this.studentService = new StudentService();
@@ -98,11 +104,6 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        setupBookTable();
-        setupStudentTable();
-        setupBorrowingTable();
-        loadInitialData();
-
         // Set initial theme
         root.getStyleClass().add("light-theme");
 
@@ -120,31 +121,49 @@ public class MainController {
         });
     }
 
-    private void setupBookTable() {
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
-        isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-        statusColumn.setCellValueFactory(cellData -> {
-            Book book = cellData.getValue();
-            long availableCopies = book.getCopies().stream()
-                    .filter(copy -> "Available".equals(copy.getStatus()))
-                    .count();
-            return new SimpleStringProperty(availableCopies > 0 ? "Available" : "Not Available");
-        });
-        totalCopiesColumn.setCellValueFactory(
-                cellData -> new SimpleIntegerProperty(cellData.getValue().getCopies().size()).asObject());
-
-        // Add double-click handler
-        booksTable.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
-                if (selectedBook != null) {
-                    showBookDetails(selectedBook);
-                }
+    public void setUser(User user) {
+        try {
+            this.currentUser = user;
+            if (welcomeLabel != null) {
+                welcomeLabel.setText("Welcome, " + user.getEmail() + " (" + user.getRole() + ")");
             }
-        });
+
+            // Setup tables and load data after user is set
+            setupBookTable();
+            setupStudentTable();
+            setupBorrowingTable();
+            loadInitialData();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Show error in status bar if available
+            if (welcomeLabel != null) {
+                welcomeLabel.setText("Error initializing main view: " + e.getMessage());
+            }
+        }
+    }
+
+    private void setupBookTable() {
+        try {
+            idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+            titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+            authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+            isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+            categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+            statusColumn.setCellValueFactory(cellData -> {
+                Book book = cellData.getValue();
+                long availableCopies = book.getCopies().stream()
+                        .filter(copy -> "Available".equals(copy.getStatus()))
+                        .count();
+                return new SimpleStringProperty(availableCopies > 0 ? "Available" : "Not Available");
+            });
+            totalCopiesColumn.setCellValueFactory(
+                    cellData -> new SimpleIntegerProperty(cellData.getValue().getCopies().size()).asObject());
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (welcomeLabel != null) {
+                welcomeLabel.setText("Error setting up book table: " + e.getMessage());
+            }
+        }
     }
 
     private void setupStudentTable() {
@@ -234,186 +253,97 @@ public class MainController {
 
     // Menu Item Handlers
     @FXML
-    private void handleExit() {
-        Platform.exit();
+    private void handleLogout() {
+        try {
+            // Clear any saved credentials
+            Preferences prefs = Preferences.userRoot().node("com.library.login");
+            prefs.remove("email");
+            prefs.remove("password");
+            prefs.putBoolean("remember", false);
+
+            // Load login view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) root.getScene().getWindow();
+            stage.setTitle("Login - Library Management System");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            showAlert("Error", "Failed to logout: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
     private void handleAddBook() {
-        try {
-            // Load the FXML file
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/fxml/add_book_dialog.fxml"));
-
-            if (loader.getLocation() == null) {
-                throw new RuntimeException("Could not find add_book_dialog.fxml");
-            }
-
-            // Load the FXML and get the controller
-            Parent root = loader.load();
-
-            // Create and configure the dialog stage
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Add New Book");
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
-            dialogStage.setResizable(true);
-            dialogStage.setWidth(800);
-            dialogStage.setHeight(600);
-
-            // Show the dialog and wait for it to close
-            dialogStage.showAndWait();
-
-            // Refresh the books table
-            refreshBooksTable();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to open add book dialog: " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void handleViewAllBooks() {
-        loadBooks();
-    }
-
-    @FXML
-    private void handleSearchBooks() {
-        String searchTerm = bookSearchField.getText().trim();
-        if (!searchTerm.isEmpty()) {
-            List<Book> books = bookService.searchBooksByTitle(searchTerm);
-            booksTable.setItems(FXCollections.observableArrayList(books));
-        } else {
-            // If search field is empty, show all books
-            loadBooks();
-        }
-    }
-
-    @FXML
-    private void handleAddStudent() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/add_student_dialog.fxml"));
-            Parent root = loader.load();
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Add New Student");
-            dialogStage.setScene(new Scene(root));
-
-            dialogStage.showAndWait();
-
-            // Refresh the students table
-            loadStudents();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void handleViewAllStudents() {
-        loadStudents();
-    }
-
-    @FXML
-    private void handleSearchStudents() {
-        String searchTerm = studentSearchField.getText().trim();
-        if (!searchTerm.isEmpty()) {
-            List<Student> students = studentService.searchStudentsByName(searchTerm);
-            studentsTable.setItems(FXCollections.observableArrayList(students));
-        } else {
-            // If search field is empty, show all students
-            loadStudents();
-        }
+        // TODO: Implement add book functionality
+        showAlert("Info", "Add Book functionality coming soon!");
     }
 
     @FXML
     private void handleAddCopy() {
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
         if (selectedBook == null) {
-            showAlert("Error", "Please select a book to add a copy.");
+            showAlert("No Selection", "Please select a book to add a copy.", Alert.AlertType.WARNING);
             return;
         }
 
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Add Copy");
-        confirmDialog.setHeaderText("Add Copy of Book");
-        confirmDialog.setContentText("Are you sure you want to add a copy of '" + selectedBook.getTitle() + "'?");
+        try {
+            bookService.addCopy(selectedBook);
+            refreshBooksTable();
+            showAlert("Success", "New copy added successfully!", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to add book copy: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
 
-        confirmDialog.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    bookService.addCopy(selectedBook);
-                    showAlert("Success", "New copy added successfully!", Alert.AlertType.INFORMATION);
-                    refreshBooksTable();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showAlert("Error", "Failed to add copy: " + e.getMessage(), Alert.AlertType.ERROR);
-                }
+    @FXML
+    private void handleSearchBooks() {
+        String searchText = bookSearchField.getText().trim();
+        try {
+            List<Book> books;
+            if (searchText.isEmpty()) {
+                books = bookService.getAllBooks();
+            } else {
+                books = bookService.searchBooks(searchText);
             }
-        });
+            booksTable.setItems(FXCollections.observableArrayList(books));
+        } catch (Exception e) {
+            showAlert("Error", "Failed to search books: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleAddMember() {
+        // TODO: Implement add member functionality
+        showAlert("Info", "Add Member functionality coming soon!");
+    }
+
+    @FXML
+    private void handleSearchMembers() {
+        // TODO: Implement search members functionality
+        showAlert("Info", "Search Members functionality coming soon!");
     }
 
     @FXML
     private void handleIssueBook() {
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
         if (selectedBook == null) {
-            showAlert("Error", "Please select a book to issue.");
+            showAlert("No Selection", "Please select a book to issue.", Alert.AlertType.WARNING);
             return;
         }
-
-        if (!selectedBook.isAvailable()) {
-            showAlert("Error", "This copy is not available for borrowing.");
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/issue_book_dialog.fxml"));
-            Parent root = loader.load();
-            IssueBookDialogController controller = loader.getController();
-            controller.setBook(selectedBook);
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Issue Book");
-            dialogStage.setScene(new Scene(root));
-            dialogStage.showAndWait();
-
-            // Refresh the tables
-            loadBooks();
-            loadBorrowings();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO: Implement book issue dialog
+        showAlert("Info", "Issue Book functionality coming soon!");
     }
 
     @FXML
     private void handleReturnBook() {
         Borrowing selectedBorrowing = borrowingsTable.getSelectionModel().getSelectedItem();
         if (selectedBorrowing == null) {
-            showAlert("Error", "Please select a borrowing to return.");
+            showAlert("No Selection", "Please select a borrowing to return.", Alert.AlertType.WARNING);
             return;
         }
-
-        if (selectedBorrowing.getReturnDate() != null) {
-            showAlert("Error", "This book has already been returned.");
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/return_book_dialog.fxml"));
-            Parent root = loader.load();
-            ReturnBookDialogController controller = loader.getController();
-            controller.setBorrowing(selectedBorrowing);
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Return Book");
-            dialogStage.setScene(new Scene(root));
-            dialogStage.showAndWait();
-
-            // Refresh the tables
-            loadBooks();
-            loadBorrowings();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO: Implement book return dialog
+        showAlert("Info", "Return Book functionality coming soon!");
     }
 
     @FXML
@@ -471,48 +401,45 @@ public class MainController {
             return;
         }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Book");
-        alert.setHeaderText("Delete Book: " + selectedBook.getTitle());
-        alert.setContentText("Are you sure you want to delete this book?");
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Delete Book");
+        confirmDialog.setHeaderText("Confirm Delete");
+        confirmDialog.setContentText("Are you sure you want to delete this book?");
 
-        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                bookService.deleteBook(selectedBook);
-                refreshBooksTable();
-                showAlert("Success", "Book deleted successfully.", Alert.AlertType.INFORMATION);
-            } catch (Exception e) {
-                showAlert("Error", "Failed to delete book: " + e.getMessage(), Alert.AlertType.ERROR);
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    bookService.deleteBook(selectedBook);
+                    refreshBooksTable();
+                    showAlert("Success", "Book deleted successfully!", Alert.AlertType.INFORMATION);
+                } catch (Exception e) {
+                    showAlert("Error", "Failed to delete book: " + e.getMessage(), Alert.AlertType.ERROR);
+                }
             }
-        }
+        });
     }
 
     @FXML
     private void handleSearchBorrowings() {
-        String searchTerm = borrowingSearchField.getText().toLowerCase();
-        if (searchTerm.isEmpty()) {
-            loadBorrowings();
-            return;
+        String searchText = borrowingSearchField.getText().trim();
+        try {
+            List<Borrowing> borrowings;
+            if (searchText.isEmpty()) {
+                borrowings = borrowingService.getAllBorrowings();
+            } else {
+                borrowings = borrowingService.searchBorrowings(searchText);
+            }
+            borrowingsTable.setItems(FXCollections.observableArrayList(borrowings));
+        } catch (Exception e) {
+            showAlert("Error", "Failed to search borrowings: " + e.getMessage(), Alert.AlertType.ERROR);
         }
-
-        List<Borrowing> allBorrowings = borrowingService.getActiveBorrowings();
-        List<Borrowing> filteredBorrowings = allBorrowings.stream()
-                .filter(b -> b.getBookCopy().getBook().getTitle().toLowerCase().contains(searchTerm) ||
-                        b.getStudent().getName().toLowerCase().contains(searchTerm))
-                .toList();
-
-        borrowingsTable.setItems(FXCollections.observableArrayList(filteredBorrowings));
     }
 
     @FXML
     private void handleOverdueBooks() {
         try {
-            List<Borrowing> overdueList = borrowingService.getOverdueBorrowings();
-            borrowingsTable.setItems(FXCollections.observableArrayList(overdueList));
-
-            if (overdueList.isEmpty()) {
-                showAlert("Information", "No overdue books found.", Alert.AlertType.INFORMATION);
-            }
+            List<Borrowing> overdueBorrowings = borrowingService.getOverdueBorrowings();
+            borrowingsTable.setItems(FXCollections.observableArrayList(overdueBorrowings));
         } catch (Exception e) {
             showAlert("Error", "Failed to load overdue books: " + e.getMessage(), Alert.AlertType.ERROR);
         }
@@ -521,31 +448,19 @@ public class MainController {
     @FXML
     private void handleFineCollection() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/fine_report_dialog.fxml"));
-            Parent root = loader.load();
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Fine Report");
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
-
-            // Show the dialog and wait for it to close
-            dialogStage.showAndWait();
-
-            // Refresh the borrowings table after the fine report dialog is closed
-            loadBorrowings();
+            List<Borrowing> fineBorrowings = borrowingService.getFineBorrowings();
+            borrowingsTable.setItems(FXCollections.observableArrayList(fineBorrowings));
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to open fine report: " + e.getMessage(), Alert.AlertType.ERROR);
+            showAlert("Error", "Failed to load fine collection: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleViewBorrowingHistory() {
         try {
-            refreshBorrowingsTable();
+            List<Borrowing> borrowings = borrowingService.getAllBorrowings();
+            borrowingsTable.setItems(FXCollections.observableArrayList(borrowings));
         } catch (Exception e) {
-            e.printStackTrace();
             showAlert("Error", "Failed to load borrowing history: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
@@ -554,83 +469,54 @@ public class MainController {
     private void handleEditBook() {
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
         if (selectedBook == null) {
-            showAlert("No Book Selected", "Please select a book to edit.");
+            showAlert("No Selection", "Please select a book to edit.", Alert.AlertType.WARNING);
             return;
         }
-
-        try {
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("Edit Book");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/add_book_dialog.fxml"));
-            DialogPane dialogPane = loader.load();
-            dialog.setDialogPane(dialogPane);
-
-            dialog.showAndWait()
-                    .filter(response -> response == ButtonType.OK)
-                    .ifPresent(response -> refreshBooksTable());
-        } catch (IOException e) {
-            showAlert("Error", "Could not open edit book dialog: " + e.getMessage());
-        }
+        // TODO: Implement book editing dialog
+        showAlert("Info", "Edit Book functionality coming soon!");
     }
 
     @FXML
     private void handleEditStudent() {
         Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
         if (selectedStudent == null) {
-            showAlert("No Student Selected", "Please select a student to edit.");
+            showAlert("No Selection", "Please select a student to edit.", Alert.AlertType.WARNING);
             return;
         }
-
-        try {
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("Edit Student");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/add_student_dialog.fxml"));
-            DialogPane dialogPane = loader.load();
-            dialog.setDialogPane(dialogPane);
-
-            dialog.showAndWait()
-                    .filter(response -> response == ButtonType.OK)
-                    .ifPresent(response -> refreshStudentsTable());
-        } catch (IOException e) {
-            showAlert("Error", "Could not open edit student dialog: " + e.getMessage());
-        }
+        // TODO: Implement student editing dialog
+        showAlert("Info", "Edit Student functionality coming soon!");
     }
 
     @FXML
     private void handleDeleteStudent() {
         Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
         if (selectedStudent == null) {
-            showAlert("Error", "Please select a student to delete.");
+            showAlert("No Selection", "Please select a student to delete.", Alert.AlertType.WARNING);
             return;
         }
 
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Confirm Delete");
-        confirmDialog.setHeaderText("Delete Student");
-        confirmDialog
-                .setContentText("Are you sure you want to delete student '" + selectedStudent.getName() + "'?\n\n" +
-                        "This will:\n" +
-                        "1. Delete all borrowing history for this student\n" +
-                        "2. Remove the student from the system\n\n" +
-                        "This action cannot be undone.");
+        confirmDialog.setTitle("Delete Student");
+        confirmDialog.setHeaderText("Confirm Delete");
+        confirmDialog.setContentText("Are you sure you want to delete this student?");
 
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    studentService.deleteStudent(selectedStudent.getId());
-                    showAlert("Success", "Student and their borrowing history deleted successfully!",
-                            Alert.AlertType.INFORMATION);
+                    studentService.deleteStudent(selectedStudent);
                     refreshStudentsTable();
+                    showAlert("Success", "Student deleted successfully!", Alert.AlertType.INFORMATION);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     showAlert("Error", "Failed to delete student: " + e.getMessage(), Alert.AlertType.ERROR);
                 }
             }
         });
+    }
+
+    @FXML
+    private void handleAddStudent() {
+        // TODO: Implement add student dialog
+        showAlert("Info", "Add Student functionality coming soon!");
     }
 
     @FXML
@@ -665,6 +551,20 @@ public class MainController {
             root.getStyleClass().remove("dark-theme");
             root.getStyleClass().add("light-theme");
         }
+    }
+
+    @FXML
+    private void handleExit() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit Application");
+        alert.setHeaderText("Confirm Exit");
+        alert.setContentText("Are you sure you want to exit the application?");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                Platform.exit();
+            }
+        });
     }
 
     private void showAlert(String title, String content) {
@@ -738,6 +638,22 @@ public class MainController {
             refreshBorrowingsTable();
         } catch (IOException e) {
             showAlert("Error", "Failed to open student details: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleSearchStudents() {
+        String searchText = studentSearchField.getText().trim();
+        try {
+            List<Student> students;
+            if (searchText.isEmpty()) {
+                students = studentService.getAllStudents();
+            } else {
+                students = studentService.searchStudents(searchText);
+            }
+            studentsTable.setItems(FXCollections.observableArrayList(students));
+        } catch (Exception e) {
+            showAlert("Error", "Failed to search students: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 }

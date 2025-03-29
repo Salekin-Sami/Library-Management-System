@@ -245,4 +245,28 @@ public class BorrowingService {
             return query.getResultList();
         }
     }
+
+    public List<Borrowing> searchBorrowings(String searchTerm) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Borrowing> query = session.createQuery(
+                    "FROM Borrowing b WHERE " +
+                            "LOWER(b.bookCopy.book.title) LIKE LOWER(:searchTerm) OR " +
+                            "LOWER(b.student.name) LIKE LOWER(:searchTerm) OR " +
+                            "LOWER(b.student.email) LIKE LOWER(:searchTerm)",
+                    Borrowing.class);
+            query.setParameter("searchTerm", "%" + searchTerm + "%");
+            return query.getResultList();
+        }
+    }
+
+    public List<Borrowing> getFineBorrowings() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Borrowing> query = session.createQuery(
+                    "FROM Borrowing b WHERE " +
+                            "b.returnDate IS NULL AND " +
+                            "b.dueDate < CURRENT_DATE",
+                    Borrowing.class);
+            return query.getResultList();
+        }
+    }
 }
