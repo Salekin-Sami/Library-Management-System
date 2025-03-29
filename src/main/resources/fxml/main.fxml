@@ -7,11 +7,13 @@
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
       fx:controller="com.library.controller.MainController"
+      fx:id="root"
       stylesheets="@../css/styles.css"
       spacing="10" styleClass="main-container">
 
     <MenuBar styleClass="menu-bar">
         <Menu text="File">
+            <MenuItem text="Toggle Theme" onAction="#handleToggleTheme"/>
             <MenuItem text="Exit" onAction="#handleExit"/>
         </Menu>
         <Menu text="Reports">

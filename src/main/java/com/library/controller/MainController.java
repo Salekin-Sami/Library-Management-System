@@ -20,12 +20,14 @@ import javafx.scene.Scene;
 import java.io.IOException;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.layout.VBox;
 
 public class MainController {
     private final BookService bookService;
     private final StudentService studentService;
     private final BorrowingService borrowingService;
     private final BookApiService bookApiService;
+    private boolean isDarkTheme = false;
 
     @FXML
     private TableView<Book> booksTable;
@@ -84,6 +86,9 @@ public class MainController {
     @FXML
     private TextField borrowingSearchField;
 
+    @FXML
+    private VBox root;
+
     public MainController() {
         this.bookService = new BookService();
         this.studentService = new StudentService();
@@ -97,6 +102,9 @@ public class MainController {
         setupStudentTable();
         setupBorrowingTable();
         loadInitialData();
+
+        // Set initial theme
+        root.getStyleClass().add("light-theme");
 
         // Add listeners to search fields
         bookSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -645,6 +653,18 @@ public class MainController {
                 }
             }
         });
+    }
+
+    @FXML
+    private void handleToggleTheme() {
+        isDarkTheme = !isDarkTheme;
+        if (isDarkTheme) {
+            root.getStyleClass().remove("light-theme");
+            root.getStyleClass().add("dark-theme");
+        } else {
+            root.getStyleClass().remove("dark-theme");
+            root.getStyleClass().add("light-theme");
+        }
     }
 
     private void showAlert(String title, String content) {
