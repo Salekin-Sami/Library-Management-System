@@ -2,6 +2,7 @@ package com.library.service;
 
 import com.library.model.Book;
 import com.library.model.BookCopy;
+import com.library.model.Borrowing;
 import com.library.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -24,6 +25,9 @@ public class BookService {
             initialCopy.setStatus("Available");
             initialCopy.setLocation("Main Library"); // Default location
             initialCopy.setPrice(0.0); // Default price
+
+            // Initialize the book's copies collection
+            book.getCopies().add(initialCopy);
 
             session.save(book);
             session.save(initialCopy);
@@ -82,18 +86,35 @@ public class BookService {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            // Delete all copies first
-            Query<BookCopy> query = session.createQuery(
-                    "FROM BookCopy bc WHERE bc.book = :book",
-                    BookCopy.class);
-            query.setParameter("book", book);
-            List<BookCopy> copies = query.getResultList();
-            for (BookCopy copy : copies) {
-                session.delete(copy);
+            // Merge the book to ensure it's in the current session
+            Book mergedBook = session.merge(book);
+
+            // Check for active borrowings
+            Query<Long> borrowingQuery = session.createQuery(
+                    "SELECT COUNT(*) FROM Borrowing b WHERE b.bookCopy.book = :book AND b.returnDate IS NULL",
+                    Long.class);
+            borrowingQuery.setParameter("book", mergedBook);
+            Long activeBorrowings = borrowingQuery.getSingleResult();
+
+            if (activeBorrowings > 0) {
+                throw new IllegalStateException("Cannot delete book: There are active borrowings for this book.");
             }
 
-            // Then delete the book
-            session.delete(book);
+            // Delete all borrowings first
+            Query<Borrowing> borrowingDeleteQuery = session.createQuery(
+                    "FROM Borrowing b WHERE b.bookCopy.book = :book",
+                    Borrowing.class);
+            borrowingDeleteQuery.setParameter("book", mergedBook);
+            List<Borrowing> borrowings = borrowingDeleteQuery.getResultList();
+            for (Borrowing borrowing : borrowings) {
+                session.delete(borrowing);
+            }
+
+            // Clear the copies collection to trigger orphan removal
+            mergedBook.getCopies().clear();
+
+            // Finally delete the book
+            session.delete(mergedBook);
             transaction.commit();
         }
     }

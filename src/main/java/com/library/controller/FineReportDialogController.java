@@ -13,17 +13,17 @@ import javafx.stage.Stage;
 
 public class FineReportDialogController {
     @FXML
-    private TableView<Borrowing> fineTable;
+    private TableView<Borrowing> finesTable;
     @FXML
-    private TableColumn<Borrowing, String> bookTitleColumn;
+    private TableColumn<Borrowing, String> bookColumn;
     @FXML
-    private TableColumn<Borrowing, String> studentNameColumn;
+    private TableColumn<Borrowing, String> studentColumn;
     @FXML
     private TableColumn<Borrowing, String> dueDateColumn;
     @FXML
     private TableColumn<Borrowing, String> fineAmountColumn;
     @FXML
-    private TableColumn<Borrowing, String> finePaidColumn;
+    private TableColumn<Borrowing, String> fineStatusColumn;
 
     private Stage dialogStage;
     private BorrowingService borrowingService;
@@ -41,10 +41,10 @@ public class FineReportDialogController {
     }
 
     private void setupTableColumns() {
-        bookTitleColumn.setCellValueFactory(
+        bookColumn.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getBookCopy().getBook().getTitle()));
 
-        studentNameColumn
+        studentColumn
                 .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStudent().getName()));
 
         dueDateColumn
@@ -53,18 +53,18 @@ public class FineReportDialogController {
         fineAmountColumn.setCellValueFactory(
                 cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().calculateFine())));
 
-        finePaidColumn.setCellValueFactory(
+        fineStatusColumn.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().isFinePaid() ? "Yes" : "No"));
     }
 
     private void loadOverdueBorrowings() {
         borrowings.setAll(borrowingService.getOverdueBorrowings());
-        fineTable.setItems(borrowings);
+        finesTable.setItems(borrowings);
     }
 
     @FXML
     private void handlePayFine() {
-        Borrowing selectedBorrowing = fineTable.getSelectionModel().getSelectedItem();
+        Borrowing selectedBorrowing = finesTable.getSelectionModel().getSelectedItem();
         if (selectedBorrowing == null) {
             showAlert(Alert.AlertType.WARNING, "No Selection",
                     "Please select a borrowing to pay fine for.");

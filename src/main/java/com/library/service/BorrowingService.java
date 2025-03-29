@@ -52,7 +52,7 @@ public class BorrowingService {
         }
     }
 
-    public void returnBook(Long borrowingId) {
+    public Borrowing returnBook(Long borrowingId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -62,9 +62,16 @@ public class BorrowingService {
             }
 
             // Update borrowing record
-            borrowing.setReturnDate(LocalDate.now());
-            if (borrowing.isOverdue()) {
-                borrowing.setFineAmount(borrowing.calculateFine());
+            LocalDate returnDate = LocalDate.now();
+            borrowing.setReturnDate(returnDate);
+
+            // Calculate fine if returned after due date
+            if (borrowing.getDueDate().isBefore(returnDate)) {
+                long daysOverdue = ChronoUnit.DAYS.between(borrowing.getDueDate(), returnDate);
+                double fine = daysOverdue * FINE_PER_DAY;
+                borrowing.setFineAmount(fine);
+            } else {
+                borrowing.setFineAmount(0.0);
             }
 
             // Update book copy status
@@ -75,6 +82,7 @@ public class BorrowingService {
             session.update(copy);
 
             transaction.commit();
+            return borrowing;
         }
     }
 
