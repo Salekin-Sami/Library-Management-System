@@ -158,6 +158,16 @@ public class MainController {
             });
             totalCopiesColumn.setCellValueFactory(
                     cellData -> new SimpleIntegerProperty(cellData.getValue().getCopies().size()).asObject());
+
+            // Add double-click handler for book details
+            booksTable.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
+                    if (selectedBook != null) {
+                        showBookDetails(selectedBook);
+                    }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             if (welcomeLabel != null) {
@@ -275,8 +285,22 @@ public class MainController {
 
     @FXML
     private void handleAddBook() {
-        // TODO: Implement add book functionality
-        showAlert("Info", "Add Book functionality coming soon!");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/add_book_dialog.fxml"));
+            Parent root = loader.load();
+            AddBookDialogController controller = loader.getController();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Add New Book");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            dialogStage.showAndWait();
+
+            // Refresh the books table after adding a new book
+            refreshBooksTable();
+        } catch (IOException e) {
+            showAlert("Error", "Could not open add book dialog: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -331,8 +355,25 @@ public class MainController {
             showAlert("No Selection", "Please select a book to issue.", Alert.AlertType.WARNING);
             return;
         }
-        // TODO: Implement book issue dialog
-        showAlert("Info", "Issue Book functionality coming soon!");
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/issue_book_dialog.fxml"));
+            Parent root = loader.load();
+            IssueBookDialogController controller = loader.getController();
+            controller.setBook(selectedBook);
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Issue Book");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            dialogStage.showAndWait();
+
+            // Refresh tables after issuing the book
+            refreshBooksTable();
+            refreshBorrowingsTable();
+        } catch (IOException e) {
+            showAlert("Error", "Could not open issue book dialog: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -342,8 +383,38 @@ public class MainController {
             showAlert("No Selection", "Please select a borrowing to return.", Alert.AlertType.WARNING);
             return;
         }
-        // TODO: Implement book return dialog
-        showAlert("Info", "Return Book functionality coming soon!");
+
+        try {
+            // Calculate fine if overdue
+            double fineAmount = selectedBorrowing.calculateFine();
+
+            Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmDialog.setTitle("Return Book");
+            confirmDialog.setHeaderText("Confirm Return");
+
+            if (fineAmount > 0) {
+                confirmDialog.setContentText(String.format(
+                        "This book is overdue. Fine amount: $%.2f\nDo you want to proceed with the return?",
+                        fineAmount));
+            } else {
+                confirmDialog.setContentText("Are you sure you want to return this book?");
+            }
+
+            confirmDialog.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        borrowingService.returnBook(selectedBorrowing.getId());
+                        refreshBorrowingsTable();
+                        refreshBooksTable();
+                        showAlert("Success", "Book returned successfully!", Alert.AlertType.INFORMATION);
+                    } catch (Exception e) {
+                        showAlert("Error", "Failed to return book: " + e.getMessage(), Alert.AlertType.ERROR);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            showAlert("Error", "Failed to process return: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -503,9 +574,11 @@ public class MainController {
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    studentService.deleteStudent(selectedStudent);
+                    studentService.deleteStudent(selectedStudent.getId());
                     refreshStudentsTable();
                     showAlert("Success", "Student deleted successfully!", Alert.AlertType.INFORMATION);
+                } catch (IllegalStateException e) {
+                    showAlert("Cannot Delete", e.getMessage(), Alert.AlertType.WARNING);
                 } catch (Exception e) {
                     showAlert("Error", "Failed to delete student: " + e.getMessage(), Alert.AlertType.ERROR);
                 }

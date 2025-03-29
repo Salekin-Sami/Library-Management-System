@@ -5,6 +5,8 @@ import com.library.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.util.List;
 
@@ -38,11 +40,63 @@ public class StudentService {
         }
     }
 
-    public void deleteStudent(Student student) {
+    public void deleteStudent(Long studentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.delete(student);
-            transaction.commit();
+            try {
+                // First check if student has any active borrowings
+                String checkBorrowingsHql = "SELECT COUNT(*) FROM Borrowing b WHERE b.student.id = :studentId AND b.returnDate IS NULL";
+                Long activeBorrowings = (Long) session.createQuery(checkBorrowingsHql)
+                        .setParameter("studentId", studentId)
+                        .getSingleResult();
+
+                if (activeBorrowings > 0) {
+                    throw new IllegalStateException(
+                            "Cannot delete student with active borrowings. Please ensure all books are returned first.");
+                }
+
+                // Check if student has any borrowing history
+                String checkHistoryHql = "SELECT COUNT(*) FROM Borrowing b WHERE b.student.id = :studentId";
+                Long totalBorrowings = (Long) session.createQuery(checkHistoryHql)
+                        .setParameter("studentId", studentId)
+                        .getSingleResult();
+
+                if (totalBorrowings > 0) {
+                    // If there's borrowing history, show a confirmation dialog
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Delete Student");
+                    alert.setHeaderText("Confirm Delete");
+                    alert.setContentText(
+                            "This student has borrowing history. Deleting will remove all their borrowing records. Do you want to continue?");
+
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == ButtonType.OK) {
+                            // Delete all borrowings first
+                            String deleteBorrowingsHql = "DELETE FROM Borrowing b WHERE b.student.id = :studentId";
+                            session.createQuery(deleteBorrowingsHql)
+                                    .setParameter("studentId", studentId)
+                                    .executeUpdate();
+
+                            // Then delete the student
+                            Student student = session.get(Student.class, studentId);
+                            if (student != null) {
+                                session.remove(student);
+                            }
+                        }
+                    });
+                } else {
+                    // No borrowing history, safe to delete
+                    Student student = session.get(Student.class, studentId);
+                    if (student != null) {
+                        session.remove(student);
+                    }
+                }
+
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
         }
     }
 
