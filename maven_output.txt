@@ -1,0 +1,69 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< com.library:library-management-system >----------------
+[INFO] Building library-management-system 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] 6 problems were encountered while building the effective model for org.openjfx:javafx-controls:jar:17.0.2 during dependency collection step for project (use -X to see details)
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ library-management-system ---
+[INFO] 
+[INFO] >>> javafx:0.0.8:run (default-cli) > process-classes @ library-management-system >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ library-management-system ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ library-management-system ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 16 source files with javac [debug target 23] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/AddBookDialogController.java:[5,27] cannot access com.library.service.BookApiService
+  bad source file: C:\Users\Sirajus Salekin Sami\Desktop\Programming\Projects\New folder\src\main\java\com\library\service\BookApiService.java
+    file does not contain class com.library.service.BookApiService
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/AddBookDialogController.java:[15,19] cannot find symbol
+  symbol:   class BookApiService
+  location: class com.library.controller.AddBookDialogController
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/MainController.java:[24,19] cannot find symbol
+  symbol:   class BookApiService
+  location: class com.library.controller.MainController
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/AddBookDialogController.java:[39,35] cannot find symbol
+  symbol:   class BookApiService
+  location: class com.library.controller.AddBookDialogController
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/MainController.java:[79,35] cannot find symbol
+  symbol:   class BookApiService
+  location: class com.library.controller.MainController
+[INFO] 5 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.366 s
+[INFO] Finished at: 2025-03-29T00:37:41+06:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project library-management-system: Compilation failure: Compilation failure: 
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/AddBookDialogController.java:[5,27] cannot access com.library.service.BookApiService
+[ERROR]   bad source file: C:\Users\Sirajus Salekin Sami\Desktop\Programming\Projects\New folder\src\main\java\com\library\service\BookApiService.java
+[ERROR]     file does not contain class com.library.service.BookApiService
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/AddBookDialogController.java:[15,19] cannot find symbol
+[ERROR]   symbol:   class BookApiService
+[ERROR]   location: class com.library.controller.AddBookDialogController
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/MainController.java:[24,19] cannot find symbol
+[ERROR]   symbol:   class BookApiService
+[ERROR]   location: class com.library.controller.MainController
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/AddBookDialogController.java:[39,35] cannot find symbol
+[ERROR]   symbol:   class BookApiService
+[ERROR]   location: class com.library.controller.AddBookDialogController
+[ERROR] /C:/Users/Sirajus Salekin Sami/Desktop/Programming/Projects/New folder/src/main/java/com/library/controller/MainController.java:[79,35] cannot find symbol
+[ERROR]   symbol:   class BookApiService
+[ERROR]   location: class com.library.controller.MainController
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

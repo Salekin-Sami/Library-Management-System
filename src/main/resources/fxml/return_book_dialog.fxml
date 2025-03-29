@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.ReturnBookDialogController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <Label text="Return Book" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    
+    <GridPane vgap="5" hgap="5">
+        <Label text="Book Title:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label fx:id="bookTitleLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        
+        <Label text="Copy Number:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Label fx:id="copyNumberLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        
+        <Label text="Location:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <Label fx:id="locationLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        
+        <Label text="Student Name:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <Label fx:id="studentNameLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        
+        <Label text="Student ID:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <Label fx:id="studentIdLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        
+        <Label text="Borrow Date:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <Label fx:id="borrowDateLabel" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+        
+        <Label text="Due Date:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <Label fx:id="dueDateLabel" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        
+        <Label text="Fine Amount:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+        <Label fx:id="fineAmountLabel" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+        
+        <Label text="Fine Paid:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+        <CheckBox fx:id="finePaidCheckBox" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+    </GridPane>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#handleCancel"/>
+        <Button text="Return Book" onAction="#handleReturnBook"/>
+    </HBox>
+</VBox> 

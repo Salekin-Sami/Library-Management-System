@@ -1,0 +1,50 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# Maven
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE specific files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# JavaFX
+*.fxml.bak
+*.css.bak
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS specific files
+.DS_Store
+Thumbs.db

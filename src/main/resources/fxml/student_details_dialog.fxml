@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.StudentDetailsDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <GridPane hgap="10" vgap="10">
+        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="nameLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Student ID:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="studentIdLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="emailLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Contact Number:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="contactNumberLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Total Books Borrowed:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label fx:id="totalBorrowedLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Label text="Current Borrowings:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label fx:id="currentBorrowingsLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <Label text="Total Unpaid Fines:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <Label fx:id="unpaidFinesLabel" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+    </GridPane>
+
+    <TabPane VBox.vgrow="ALWAYS">
+        <Tab text="Current Borrowings" closable="false">
+            <TableView fx:id="currentBorrowingsTable">
+                <columns>
+                    <TableColumn text="Book Title" fx:id="bookTitleColumn"/>
+                    <TableColumn text="Copy #" fx:id="copyNumberColumn"/>
+                    <TableColumn text="Borrow Date" fx:id="borrowDateColumn"/>
+                    <TableColumn text="Due Date" fx:id="dueDateColumn"/>
+                    <TableColumn text="Fine" fx:id="fineColumn"/>
+                    <TableColumn text="Status" fx:id="statusColumn"/>
+                </columns>
+            </TableView>
+        </Tab>
+        <Tab text="Borrowing History" closable="false">
+            <TableView fx:id="borrowingHistoryTable">
+                <columns>
+                    <TableColumn text="Book Title" fx:id="historyBookTitleColumn"/>
+                    <TableColumn text="Copy #" fx:id="historyCopyNumberColumn"/>
+                    <TableColumn text="Borrow Date" fx:id="historyBorrowDateColumn"/>
+                    <TableColumn text="Due Date" fx:id="historyDueDateColumn"/>
+                    <TableColumn text="Return Date" fx:id="returnDateColumn"/>
+                    <TableColumn text="Fine" fx:id="historyFineColumn"/>
+                    <TableColumn text="Status" fx:id="historyStatusColumn"/>
+                </columns>
+            </TableView>
+        </Tab>
+    </TabPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Edit Student" onAction="#handleEditStudent" fx:id="editButton"/>
+        <Button text="Close" onAction="#handleClose" fx:id="closeButton"/>
+    </HBox>
+</VBox> 

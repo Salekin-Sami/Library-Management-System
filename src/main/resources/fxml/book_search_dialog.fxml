@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.library.controller.BookSearchDialogController"
+            style="-fx-background-color: white; -fx-background-radius: 10;">
+    
+    <content>
+        <VBox spacing="10" style="-fx-background-color: white;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            
+            <Label text="Search for a book:" style="-fx-font-weight: bold;"/>
+            
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Enter book title, author, or ISBN..." 
+                          style="-fx-background-radius: 20; -fx-padding: 8;" HBox.hgrow="ALWAYS"/>
+                <Button text="Search" onAction="#handleSearch" 
+                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 15;"/>
+            </HBox>
+            
+            <ProgressIndicator fx:id="progressIndicator" visible="false" VBox.vgrow="ALWAYS"/>
+            
+            <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                <style>
+                    -fx-background-color: transparent;
+                    -fx-table-cell-border-color: transparent;
+                </style>
+                <styleClass>
+                    <java.lang.String fx:value="table-view"/>
+                </styleClass>
+                <columns>
+                    <TableColumn fx:id="titleColumn" text="Title" style="-fx-background-color: #f8f9fa;"/>
+                    <TableColumn fx:id="authorColumn" text="Author" style="-fx-background-color: #f8f9fa;"/>
+                    <TableColumn fx:id="isbnColumn" text="ISBN" style="-fx-background-color: #f8f9fa;"/>
+                    <TableColumn fx:id="publisherColumn" text="Publisher" style="-fx-background-color: #f8f9fa;"/>
+                    <TableColumn fx:id="yearColumn" text="Year" style="-fx-background-color: #f8f9fa;"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </content>
+    
+    <buttonTypes>
+        <ButtonType fx:constant="OK"/>
+        <ButtonType fx:constant="CANCEL"/>
+    </buttonTypes>
+    
+    <stylesheets>
+        <java.net.URL value="@../styles/styles.css"/>
+    </stylesheets>
+</DialogPane> 

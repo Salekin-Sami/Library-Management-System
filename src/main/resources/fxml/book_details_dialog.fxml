@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.library.controller.BookDetailsDialogController"
+      styleClass="dialog-container"
+      spacing="15">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox spacing="20" styleClass="header-section">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label fx:id="titleLabel" styleClass="title-label"/>
+            <Label fx:id="authorLabel" styleClass="subtitle-label"/>
+            <HBox spacing="20">
+                <Label fx:id="isbnLabel" styleClass="info-label"/>
+                <Label fx:id="publisherLabel" styleClass="info-label"/>
+                <Label fx:id="publicationYearLabel" styleClass="info-label"/>
+                <Label fx:id="categoryLabel" styleClass="info-label"/>
+            </HBox>
+            <Label fx:id="statusLabel" styleClass="status-label"/>
+        </VBox>
+        <ImageView fx:id="coverImageView" 
+                   fitWidth="120" 
+                   fitHeight="180" 
+                   preserveRatio="true"
+                   styleClass="book-cover"/>
+    </HBox>
+
+    <!-- Main Content -->
+    <TabPane VBox.vgrow="ALWAYS" styleClass="content-tab-pane">
+        <!-- Details Tab -->
+        <Tab text="Details" closable="false">
+            <VBox spacing="15">
+                <Label text="Description" styleClass="section-title"/>
+                <TextArea fx:id="descriptionArea" 
+                         editable="false" 
+                         wrapText="true" 
+                         VBox.vgrow="ALWAYS"
+                         styleClass="description-area"/>
+            </VBox>
+        </Tab>
+
+        <!-- Copies Tab -->
+        <Tab text="Copies" closable="false">
+            <VBox spacing="15">
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="section-header">
+                    <Label text="Total Copies:" styleClass="section-title"/>
+                    <Label fx:id="totalCopiesLabel" styleClass="section-value"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="addCopyButton" 
+                            text="Add Copy" 
+                            onAction="#handleAddCopy"
+                            styleClass="primary-button"/>
+                </HBox>
+                <TableView fx:id="copiesTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                    <columns>
+                        <TableColumn fx:id="copyNumberColumn" text="Copy #" prefWidth="80"/>
+                        <TableColumn fx:id="copyStatusColumn" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="copyLocationColumn" text="Location" prefWidth="150"/>
+                        <TableColumn fx:id="copyPriceColumn" text="Price" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- Borrowing History Tab -->
+        <Tab text="Borrowing History" closable="false">
+            <VBox spacing="15">
+                <TableView fx:id="borrowingHistoryTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                    <columns>
+                        <TableColumn fx:id="borrowerColumn" text="Borrower" prefWidth="150"/>
+                        <TableColumn fx:id="borrowDateColumn" text="Borrow Date" prefWidth="100"/>
+                        <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="100"/>
+                        <TableColumn fx:id="returnDateColumn" text="Return Date" prefWidth="100"/>
+                        <TableColumn fx:id="fineColumn" text="Fine" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+
+    <!-- Footer Section -->
+    <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="footer-section">
+        <Button fx:id="editButton" 
+                text="Edit Book" 
+                onAction="#handleEdit"
+                styleClass="primary-button"/>
+        <Button text="Close" 
+                onAction="#handleClose" 
+                styleClass="secondary-button"/>
+    </HBox>
+</VBox> 

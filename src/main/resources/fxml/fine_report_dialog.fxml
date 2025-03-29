@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.FineReportDialogController"
+      styleClass="dialog-container">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <Label text="Fine Report" styleClass="title-label"/>
+    
+    <TableView fx:id="finesTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+        <columns>
+            <TableColumn fx:id="bookColumn" text="Book" prefWidth="200"/>
+            <TableColumn fx:id="studentColumn" text="Student" prefWidth="150"/>
+            <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="100"/>
+            <TableColumn fx:id="fineAmountColumn" text="Fine Amount" prefWidth="100"/>
+            <TableColumn fx:id="fineStatusColumn" text="Status" prefWidth="100"/>
+        </columns>
+    </TableView>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="footer-section">
+        <Label text="Total Fines:" styleClass="info-label"/>
+        <Label fx:id="totalFinesLabel" styleClass="section-value"/>
+        <Label text="Paid Fines:" styleClass="info-label"/>
+        <Label fx:id="paidFinesLabel" styleClass="section-value"/>
+        <Label text="Unpaid Fines:" styleClass="info-label"/>
+        <Label fx:id="unpaidFinesLabel" styleClass="section-value"/>
+    </HBox>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Close" onAction="#handleClose" styleClass="secondary-button"/>
+    </HBox>
+</VBox> 

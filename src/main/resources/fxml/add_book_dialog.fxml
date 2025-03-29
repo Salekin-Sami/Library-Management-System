@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.library.controller.AddBookDialogController"
+      style="-fx-background-color: white; -fx-background-radius: 10;">
+    
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <spacing>10</spacing>
+    
+    <Label text="Search for a book:" style="-fx-font-weight: bold;"/>
+    
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="Enter book title, author, or ISBN..." 
+                  style="-fx-background-radius: 20; -fx-padding: 8;" HBox.hgrow="ALWAYS"/>
+        <Button text="Search" onAction="#handleSearch" 
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 15;"/>
+    </HBox>
+    
+    <ProgressIndicator fx:id="progressIndicator" visible="false" VBox.vgrow="ALWAYS"/>
+    
+    <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+        <style>
+            -fx-background-color: transparent;
+            -fx-table-cell-border-color: transparent;
+        </style>
+        <styleClass>
+            <java.lang.String fx:value="table-view"/>
+        </styleClass>
+        <columns>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="300" minWidth="200"/>
+            <TableColumn fx:id="authorColumn" text="Author" prefWidth="200" minWidth="150"/>
+            <TableColumn fx:id="isbnColumn" text="ISBN" prefWidth="120" minWidth="100"/>
+            <TableColumn fx:id="publisherColumn" text="Publisher" prefWidth="200" minWidth="150"/>
+            <TableColumn fx:id="yearColumn" text="Year" prefWidth="80" minWidth="60"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="addBookButton" text="Add Selected Book" onAction="#handleAddSelectedBook" 
+                style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 15;"
+                visible="false"/>
+    </HBox>
+    
+    <stylesheets>
+        <java.net.URL value="@../styles/styles.css"/>
+    </stylesheets>
+</VBox> 

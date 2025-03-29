@@ -1,0 +1,81 @@
+.dialog-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.subtitle-label {
+    -fx-font-size: 18px;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: #f0f0f0;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.table-row-cell:even {
+    -fx-background-color: white;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #0078d4;
+    -fx-text-fill: white;
+}
+
+.button {
+    -fx-background-color: #0078d4;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+}
+
+.button:hover {
+    -fx-background-color: #106ebe;
+}
+
+.button.secondary-button {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+}
+
+.button.secondary-button:hover {
+    -fx-background-color: #d0d0d0;
+}
+
+.text-area {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+}
+
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #f0f0f0;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #e0e0e0;
+    -fx-padding: 8 16;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: #0078d4;
+    -fx-border-width: 0 0 2 0;
+}

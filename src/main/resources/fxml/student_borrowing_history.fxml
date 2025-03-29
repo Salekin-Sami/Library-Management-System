@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.StudentBorrowingHistoryController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Student:" style="-fx-font-size: 14px;"/>
+        <Label fx:id="studentNameLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+        <Label fx:id="studentIdLabel" style="-fx-font-size: 14px;"/>
+    </HBox>
+
+    <TabPane>
+        <Tab text="Current Borrowings" closable="false">
+            <VBox spacing="10">
+                <TableView fx:id="currentBorrowingsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Book Title" fx:id="bookTitleColumn"/>
+                        <TableColumn text="Copy #" fx:id="copyNumberColumn"/>
+                        <TableColumn text="Borrow Date" fx:id="borrowDateColumn"/>
+                        <TableColumn text="Due Date" fx:id="dueDateColumn"/>
+                        <TableColumn text="Fine" fx:id="fineColumn"/>
+                        <TableColumn text="Status" fx:id="statusColumn"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Return Selected" onAction="#handleReturnSelected" fx:id="returnButton"/>
+                </HBox>
+            </VBox>
+        </Tab>
+        
+        <Tab text="Borrowing History" closable="false">
+            <VBox spacing="10">
+                <TableView fx:id="borrowingHistoryTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Book Title" fx:id="historyBookTitleColumn"/>
+                        <TableColumn text="Copy #" fx:id="historyCopyNumberColumn"/>
+                        <TableColumn text="Borrow Date" fx:id="historyBorrowDateColumn"/>
+                        <TableColumn text="Due Date" fx:id="historyDueDateColumn"/>
+                        <TableColumn text="Return Date" fx:id="returnDateColumn"/>
+                        <TableColumn text="Fine" fx:id="historyFineColumn"/>
+                        <TableColumn text="Status" fx:id="historyStatusColumn"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+</VBox> 
