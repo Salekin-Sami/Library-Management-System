@@ -8,6 +8,11 @@
     <artifactId>library-management-system</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!-- This is the Project Object Model (POM) file for the Library Management System project.
+         It defines the project's dependencies, build configuration, and plugins required for
+         compiling, testing, and packaging the application. -->
+
+         
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
