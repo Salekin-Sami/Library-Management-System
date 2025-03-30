@@ -49,6 +49,14 @@ public class AddBookDialogController {
      * visibility of the addBookButton based on the selection in the resultsTable.
      */
 
+    /**
+     * Initializes the AddBookDialogController by setting up the table columns,
+     * binding the search results to the resultsTable, and configuring the
+     * visibility of the addBookButton based on the selection in the resultsTable.
+     * <p>
+     * The selection in the resultsTable is listened to, and the addBookButton is
+     * made visible only if a book is selected.
+     */
     @FXML
     public void initialize() {
         setupTableColumns();

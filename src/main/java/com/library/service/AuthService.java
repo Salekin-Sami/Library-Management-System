@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 public class AuthService {
+    private int currentUserId;
 
     public void createTestAdmin() throws SQLException {
         String query = "INSERT INTO users (email, password_hash, role) VALUES (?, ?, 'admin') ON DUPLICATE KEY UPDATE password_hash = ?";
@@ -31,37 +32,31 @@ public class AuthService {
         }
     }
 
-    public User login(String email, String password) throws SQLException {
-        String query = "SELECT * FROM users WHERE email = ?";
+    public boolean login(String email, String password, String role) {
+        String sql = "SELECT id, password_hash FROM users WHERE email = ? AND role = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            System.out.println("Attempting login for email: " + email);
             stmt.setString(1, email);
+            stmt.setString(2, role);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 String storedHash = rs.getString("password_hash");
-                System.out.println("Found user with stored hash: " + storedHash);
-                System.out.println("Checking password: " + password);
-
                 if (BCrypt.checkpw(password, storedHash)) {
-                    System.out.println("Password check successful!");
-                    User user = new User();
-                    user.setId(rs.getInt("id"));
-                    user.setEmail(rs.getString("email"));
-                    user.setRole(rs.getString("role"));
-                    user.setPasswordResetRequired(rs.getBoolean("password_reset_required"));
-                    return user;
-                } else {
-                    System.out.println("Password check failed!");
+                    currentUserId = rs.getInt("id");
+                    return true;
                 }
-            } else {
-                System.out.println("No user found with email: " + email);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return null;
+        return false;
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
     }
 
     public boolean register(String email, String password) throws SQLException {
@@ -133,5 +128,56 @@ public class AuthService {
         }
 
         return tempPassword.toString();
+    }
+
+    public boolean sendPasswordResetEmail(String email) {
+        String sql = "SELECT id FROM users WHERE email = ?";
+        String updateSql = "UPDATE users SET temp_password = ?, temp_password_expiry = ?, password_reset_required = TRUE WHERE id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            // First, get the user ID
+            int userId = -1;
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    userId = rs.getInt("id");
+                }
+            }
+
+            if (userId != -1) {
+                // Generate a temporary password
+                String tempPassword = generateTemporaryPassword();
+                String hashedTempPassword = BCrypt.hashpw(tempPassword, BCrypt.gensalt());
+
+                // Update the user's temporary password
+                try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
+                    stmt.setString(1, hashedTempPassword);
+                    stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis() + 24 * 60 * 60 * 1000)); // 24 hours
+                                                                                                           // expiry
+                    stmt.setInt(3, userId);
+                    stmt.executeUpdate();
+                }
+
+                // TODO: Send email with temporary password
+                // For now, we'll just print it to console
+                System.out.println("Temporary password for " + email + ": " + tempPassword);
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String generateTemporaryPassword() {
+        // Generate a random 8-character password
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int index = (int) (Math.random() * chars.length());
+            password.append(chars.charAt(index));
+        }
+        return password.toString();
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.StudentHistoryController"
+      stylesheets="@../css/styles.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <TableView fx:id="historyTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="bookColumn" text="Book" prefWidth="200"/>
+            <TableColumn fx:id="borrowDateColumn" text="Borrow Date" prefWidth="120"/>
+            <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="120"/>
+            <TableColumn fx:id="returnDateColumn" text="Return Date" prefWidth="120"/>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+            <TableColumn fx:id="fineColumn" text="Fine" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Close" onAction="#handleClose"/>
+    </HBox>
+</VBox> 

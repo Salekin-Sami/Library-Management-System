@@ -1,19 +1,19 @@
 package com.library.controller;
 
+import com.library.model.Student;
+import com.library.model.StudentProfile;
 import com.library.model.User;
 import com.library.service.AuthService;
+import com.library.service.StudentService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.prefs.Preferences;
 
 public class LoginController {
@@ -22,30 +22,43 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
     @FXML
-    private Label messageLabel;
+    private ComboBox<String> roleComboBox;
+    @FXML
+    private Button registerButton;
     @FXML
     private CheckBox rememberMeCheckbox;
 
-    private final AuthService authService = new AuthService();
+    private AuthService authService = new AuthService();
+    private StudentService studentService = new StudentService();
     private static final String PREF_NODE = "com.library.login";
     private static final String KEY_EMAIL = "email";
-    private static final String KEY_PASSWORD = "password";
-    private static final String KEY_REMEMBER = "remember";
+    private static final String KEY_ROLE = "role";
 
     @FXML
     public void initialize() {
+        // Add items to the role combo box
+        roleComboBox.getItems().addAll("admin", "student");
+        roleComboBox.setValue("student"); // Set default value
+
+        // Hide register button since registration will be admin-only
+        registerButton.setVisible(false);
+        registerButton.setManaged(false);
+
         loadSavedCredentials();
     }
 
     private void loadSavedCredentials() {
         Preferences prefs = Preferences.userRoot().node(PREF_NODE);
-        boolean remember = prefs.getBoolean(KEY_REMEMBER, false);
-        if (remember) {
-            String savedEmail = prefs.get(KEY_EMAIL, "");
-            String savedPassword = prefs.get(KEY_PASSWORD, "");
+        String savedEmail = prefs.get(KEY_EMAIL, "");
+        String savedRole = prefs.get(KEY_ROLE, "");
+
+        if (!savedEmail.isEmpty()) {
             emailField.setText(savedEmail);
-            passwordField.setText(savedPassword);
             rememberMeCheckbox.setSelected(true);
+
+            if (!savedRole.isEmpty()) {
+                roleComboBox.setValue(savedRole);
+            }
         }
     }
 
@@ -53,12 +66,10 @@ public class LoginController {
         Preferences prefs = Preferences.userRoot().node(PREF_NODE);
         if (rememberMeCheckbox.isSelected()) {
             prefs.put(KEY_EMAIL, emailField.getText());
-            prefs.put(KEY_PASSWORD, passwordField.getText());
-            prefs.putBoolean(KEY_REMEMBER, true);
+            prefs.put(KEY_ROLE, roleComboBox.getValue());
         } else {
             prefs.remove(KEY_EMAIL);
-            prefs.remove(KEY_PASSWORD);
-            prefs.putBoolean(KEY_REMEMBER, false);
+            prefs.remove(KEY_ROLE);
         }
     }
 
@@ -66,109 +77,112 @@ public class LoginController {
     private void handleLogin() {
         String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
+        String role = roleComboBox.getValue();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            showAlert("Error", "Please enter both email and password.");
+        if (email.isEmpty() || password.isEmpty() || role == null) {
+            showAlert("Error", "Please fill in all fields!");
             return;
         }
 
-        try {
-            User user = authService.login(email, password);
-            if (user != null) {
-                if (user.isPasswordResetRequired()) {
-                    showPasswordResetDialog(email);
-                } else {
-                    // Save credentials if Remember Me is checked
-                    saveCredentials();
-
-                    // Navigate to main view
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-                    Parent root = loader.load();
-                    MainController mainController = loader.getController();
-                    mainController.setUser(user);
-
-                    Stage stage = (Stage) emailField.getScene().getWindow();
-                    stage.setTitle("Library Management System");
-                    stage.setScene(new Scene(root));
-                    stage.show();
-                }
-            } else {
-                messageLabel.setText("Invalid email or password.");
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
-        } catch (Exception e) {
-            showAlert("Error", "Failed to load main view: " + e.getMessage());
+        if ("admin".equals(role)) {
+            handleAdminLogin(email, password);
+        } else {
+            handleStudentLogin(email, password);
         }
     }
 
-    private void showPasswordResetDialog(String email) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/password_reset_dialog.fxml"));
-            Parent root = loader.load();
-            PasswordResetDialogController controller = loader.getController();
-            controller.setUserEmail(email);
+    private void handleAdminLogin(String email, String password) {
+        if (authService.login(email, password, "admin")) {
+            saveCredentials();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+                Parent root = loader.load();
+                MainController controller = loader.getController();
 
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Reset Password");
-            dialogStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
-            dialogStage.showAndWait();
-        } catch (Exception e) {
-            showAlert("Error", "Failed to open password reset dialog: " + e.getMessage());
+                // Create and set the user object
+                User user = new User();
+                user.setEmail(email);
+                user.setRole("admin");
+                controller.setUser(user);
+
+                Stage stage = (Stage) emailField.getScene().getWindow();
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+                stage.setScene(scene);
+                stage.setTitle("Library Management System - Admin Dashboard");
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error", "Failed to load admin dashboard: " + e.getMessage());
+            }
+        } else {
+            showAlert("Error", "Invalid email or password!");
+        }
+    }
+
+    private void handleStudentLogin(String email, String password) {
+        if (authService.login(email, password, "student")) {
+            saveCredentials();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/student_dashboard.fxml"));
+                Parent root = loader.load();
+                StudentDashboardController controller = loader.getController();
+
+                // Get student details from the database
+                Student student = studentService.getStudentByEmail(email);
+                if (student != null) {
+                    controller.setCurrentStudent(student);
+
+                    Stage stage = (Stage) emailField.getScene().getWindow();
+                    Scene scene = new Scene(root);
+                    scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+
+                    stage.setScene(scene);
+                    stage.setTitle("Library Management System - Student Dashboard");
+                    stage.show();
+                } else {
+                    showAlert("Error", "Student profile not found!");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error", "Failed to load student dashboard: " + e.getMessage());
+            }
+        } else {
+            showAlert("Error", "Invalid email or password!");
         }
     }
 
     @FXML
     private void handleRegister() {
-        String email = emailField.getText().trim();
-        String password = passwordField.getText().trim();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            showAlert("Error", "Please enter both email and password.");
-            return;
-        }
-
-        if (!isValidEmail(email)) {
-            showAlert("Error", "Please enter a valid email address.");
-            return;
-        }
-
         try {
-            if (authService.register(email, password)) {
-                showAlert("Success", "Registration successful! You can now login.");
-                messageLabel.setText("");
-            } else {
-                messageLabel.setText("Registration failed. Email might already be registered.");
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/student_registration.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) emailField.getScene().getWindow();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+
+            stage.setScene(scene);
+            stage.setTitle("Student Registration");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load registration screen: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleForgotPassword() {
         String email = emailField.getText().trim();
-
         if (email.isEmpty()) {
-            showAlert("Error", "Please enter your email address.");
+            showAlert("Error", "Please enter your email address!");
             return;
         }
 
-        if (!isValidEmail(email)) {
-            showAlert("Error", "Please enter a valid email address.");
-            return;
-        }
-
-        try {
-            if (authService.requestPasswordReset(email)) {
-                showAlert("Success", "A temporary password has been sent to your email.");
-                messageLabel.setText("");
-            } else {
-                messageLabel.setText("Email not found in the system.");
-            }
-        } catch (SQLException e) {
-            showAlert("Error", "Database error: " + e.getMessage());
+        if (authService.sendPasswordResetEmail(email)) {
+            showAlert("Success", "Password reset instructions have been sent to your email.");
+        } else {
+            showAlert("Error", "Failed to send password reset email. Please try again.");
         }
     }
 
@@ -178,9 +192,5 @@ public class LoginController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    private boolean isValidEmail(String email) {
-        return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
 }

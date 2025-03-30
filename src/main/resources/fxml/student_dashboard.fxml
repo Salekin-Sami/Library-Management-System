@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.StudentDashboardController">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+        <Label fx:id="welcomeLabel" style="-fx-font-size: 18px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Profile" onAction="#handleProfile"/>
+        <Button text="Logout" onAction="#handleLogout"/>
+    </HBox>
+
+    <TabPane VBox.vgrow="ALWAYS">
+        <Tab text="Search Books" closable="false">
+            <VBox spacing="10">
+                <HBox spacing="10" alignment="CENTER">
+                    <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Search books..."/>
+                    <ComboBox fx:id="searchFilter" promptText="Filter by" prefWidth="150">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="All"/>
+                                <String fx:value="Title"/>
+                                <String fx:value="Author"/>
+                                <String fx:value="Category"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                    <Button text="Search" onAction="#handleSearch"/>
+                </HBox>
+                <TableView fx:id="booksTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Title" fx:id="titleColumn"/>
+                        <TableColumn text="Author" fx:id="authorColumn"/>
+                        <TableColumn text="Status" fx:id="statusColumn"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <Tab text="My Requests" closable="false">
+            <VBox spacing="10">
+                <TableView fx:id="requestsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Book Title" fx:id="requestBookTitleColumn"/>
+                        <TableColumn text="Request Date" fx:id="requestDateColumn"/>
+                        <TableColumn text="Due Date" fx:id="dueDateColumn"/>
+                        <TableColumn text="Status" fx:id="requestStatusColumn"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+</VBox> 

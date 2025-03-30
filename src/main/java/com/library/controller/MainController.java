@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.VBox;
 import com.library.model.User;
 import java.util.prefs.Preferences;
+import java.time.format.DateTimeFormatter;
 
 public class MainController {
     private final BookService bookService;
@@ -95,6 +96,20 @@ public class MainController {
     @FXML
     private Label welcomeLabel;
 
+    @FXML
+    private Label totalBooksLabel;
+    @FXML
+    private Label totalStudentsLabel;
+    @FXML
+    private Label currentBorrowingsLabel;
+    @FXML
+    private Label overdueBooksLabel;
+    @FXML
+    private Label totalFinesLabel;
+
+    @FXML
+    private Label dateLabel;
+
     public MainController() {
         this.bookService = new BookService();
         this.studentService = new StudentService();
@@ -104,21 +119,45 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        // Set initial theme
-        root.getStyleClass().add("light-theme");
+        try {
+            // Set initial theme
+            root.getStyleClass().add("light-theme");
 
-        // Add listeners to search fields
-        bookSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue.trim().isEmpty()) {
-                loadBooks();
-            }
-        });
+            // Setup tables
+            setupBookTable();
+            setupStudentTable();
+            setupBorrowingTable();
 
-        studentSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue.trim().isEmpty()) {
-                loadStudents();
+            // Add listeners to search fields
+            bookSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    loadBooks();
+                }
+            });
+
+            studentSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    loadStudents();
+                }
+            });
+
+            borrowingSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    loadBorrowings();
+                }
+            });
+
+            // Set current date
+            if (dateLabel != null) {
+                dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")));
             }
-        });
+
+            // Load initial data
+            loadInitialData();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to initialize main view: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     public void setUser(User user) {
@@ -236,29 +275,75 @@ public class MainController {
     }
 
     private void loadInitialData() {
-        loadBooks();
-        loadStudents();
-        loadBorrowings();
-        loadRecentActivities();
+        try {
+            loadBooks();
+            loadStudents();
+            loadBorrowings();
+            loadRecentActivities();
+            updateStatistics();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load initial data: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void loadBooks() {
-        List<Book> books = bookService.getAllBooks();
-        booksTable.setItems(FXCollections.observableArrayList(books));
+        try {
+            List<Book> books = bookService.getAllBooks();
+            booksTable.setItems(FXCollections.observableArrayList(books));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load books: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void loadStudents() {
-        List<Student> students = studentService.getAllStudents();
-        studentsTable.setItems(FXCollections.observableArrayList(students));
+        try {
+            List<Student> students = studentService.getAllStudents();
+            studentsTable.setItems(FXCollections.observableArrayList(students));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load students: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void loadBorrowings() {
-        List<Borrowing> borrowings = borrowingService.getActiveBorrowings();
-        borrowingsTable.setItems(FXCollections.observableArrayList(borrowings));
+        try {
+            List<Borrowing> borrowings = borrowingService.getAllBorrowings();
+            borrowingsTable.setItems(FXCollections.observableArrayList(borrowings));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load borrowings: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void loadRecentActivities() {
         // TODO: Implement recent activities loading
+    }
+
+    private void updateStatistics() {
+        try {
+            // Update total books
+            totalBooksLabel.setText(String.valueOf(bookService.getAllBooks().size()));
+
+            // Update total students
+            totalStudentsLabel.setText(String.valueOf(studentService.getAllStudents().size()));
+
+            // Update current borrowings
+            List<Borrowing> currentBorrowings = borrowingService.getCurrentBorrowings();
+            currentBorrowingsLabel.setText(String.valueOf(currentBorrowings.size()));
+
+            // Update overdue books
+            List<Borrowing> overdueBorrowings = borrowingService.getOverdueBorrowings();
+            overdueBooksLabel.setText(String.valueOf(overdueBorrowings.size()));
+
+            // Update total unpaid fines
+            double totalFines = borrowingService.getTotalUnpaidFines();
+            totalFinesLabel.setText(String.format("$%.2f", totalFines));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to update statistics: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     // Menu Item Handlers
@@ -588,8 +673,21 @@ public class MainController {
 
     @FXML
     private void handleAddStudent() {
-        // TODO: Implement add student dialog
-        showAlert("Info", "Add Student functionality coming soon!");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/add_student_dialog.fxml"));
+            Parent root = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Add New Student");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            dialogStage.showAndWait();
+
+            // Refresh the students table after adding a new student
+            refreshStudentsTable();
+        } catch (IOException e) {
+            showAlert("Error", "Could not open add student dialog: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -640,6 +738,70 @@ public class MainController {
         });
     }
 
+    @FXML
+    private void handleUserGuide() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("User Guide");
+        alert.setHeaderText("Library Management System - User Guide");
+        alert.setContentText(
+                "Welcome to the Library Management System!\n\n" +
+                        "For Students:\n" +
+                        "- Login using your email and student ID as password\n" +
+                        "- Browse available books\n" +
+                        "- View your borrowing history\n" +
+                        "- Check due dates and fines\n\n" +
+                        "For Administrators:\n" +
+                        "- Manage books (add, edit, delete)\n" +
+                        "- Register new students\n" +
+                        "- Handle book borrowings and returns\n" +
+                        "- Generate reports\n\n" +
+                        "For assistance, please contact the library staff.");
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleAbout() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Library Management System");
+        alert.setContentText(
+                "Version: 1.0\n" +
+                        "A comprehensive system for managing library operations.\n\n" +
+                        "Features:\n" +
+                        "- Book Management\n" +
+                        "- Student Management\n" +
+                        "- Borrowing Management\n" +
+                        "- Fine Calculation\n" +
+                        "- Reports Generation");
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleViewStudentHistory() {
+        Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
+        if (selectedStudent == null) {
+            showAlert("Error", "Please select a student first!", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/student_history.fxml"));
+            Parent root = loader.load();
+
+            StudentHistoryController controller = loader.getController();
+            controller.setStudent(selectedStudent);
+
+            Stage stage = new Stage();
+            stage.setTitle("Student History - " + selectedStudent.getName());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load student history: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -658,14 +820,17 @@ public class MainController {
 
     private void refreshBooksTable() {
         booksTable.setItems(FXCollections.observableArrayList(bookService.getAllBooks()));
+        updateStatistics();
     }
 
     private void refreshStudentsTable() {
         studentsTable.setItems(FXCollections.observableArrayList(studentService.getAllStudents()));
+        updateStatistics();
     }
 
     private void refreshBorrowingsTable() {
         borrowingsTable.setItems(FXCollections.observableArrayList(borrowingService.getAllBorrowings()));
+        updateStatistics();
     }
 
     private void showBookDetails(Book book) {

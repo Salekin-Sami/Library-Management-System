@@ -32,6 +32,12 @@ public class Student {
     @Column(name = "updated_at")
     private LocalDate updatedAt;
 
+    @Column(name = "books_borrowed")
+    private Integer booksBorrowed = 0;
+
+    @Column(name = "max_books")
+    private Integer maxBooks = 3;
+
     // Default constructor
     public Student() {
         this.createdAt = LocalDate.now();
@@ -100,6 +106,32 @@ public class Student {
         return updatedAt;
     }
 
+    public boolean canBorrowMore() {
+        return booksBorrowed < maxBooks;
+    }
+
+    public Integer getBooksBorrowed() {
+        return booksBorrowed;
+    }
+
+    public void setBooksBorrowed(Integer booksBorrowed) {
+        this.booksBorrowed = booksBorrowed;
+        this.updatedAt = LocalDate.now();
+    }
+
+    public Integer getMaxBooks() {
+        return maxBooks;
+    }
+
+    public void setMaxBooks(Integer maxBooks) {
+        this.maxBooks = maxBooks;
+        this.updatedAt = LocalDate.now();
+    }
+
+    public Long getUserId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
@@ -111,4 +143,4 @@ public class Student {
                 ", role=" + role +
                 '}';
     }
-} 
+}

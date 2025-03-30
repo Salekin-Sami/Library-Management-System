@@ -46,8 +46,9 @@ public class AddStudentDialogController {
 
     @FXML
     public void initialize() {
-        roleComboBox.setItems(FXCollections.observableArrayList(UserRole.values()));
-        roleComboBox.setValue(UserRole.STUDENT); // Default role
+        // Remove role selection since it will always be student
+        roleComboBox.setVisible(false);
+        roleComboBox.setManaged(false);
     }
 
     @FXML
@@ -78,29 +79,38 @@ public class AddStudentDialogController {
         studentIdField.setText(studentId);
         emailField.setText(email);
         contactNumberField.setText(phoneNumber);
-        roleComboBox.setValue(UserRole.STUDENT);
     }
 
     @FXML
     private void handleAddStudent() {
         if (validateInput()) {
-            Student student = editingStudent != null ? editingStudent : new Student();
-            student.setStudentId(studentIdField.getText());
-            student.setName(nameField.getText());
-            student.setEmail(emailField.getText());
-            student.setContactNumber(contactNumberField.getText());
-            student.setRole(roleComboBox.getValue());
+            try {
+                // Register student using the updated method
+                Student student = studentService.registerStudent(
+                        emailField.getText(),
+                        nameField.getText(),
+                        studentIdField.getText(),
+                        contactNumberField.getText());
 
-            // Save or update the student
-            if (editingStudent != null) {
-                studentService.updateStudent(student);
-            } else {
-                studentService.addStudent(student);
+                if (student != null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText("Student Registered Successfully");
+                    alert.setContentText(
+                            "Email: " + student.getEmail() + "\nStudent ID (Password): " + student.getStudentId());
+                    alert.showAndWait();
+                }
+
+                // Close the dialog
+                Stage stage = (Stage) studentIdField.getScene().getWindow();
+                stage.close();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Registration Failed");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             }
-
-            // Close the dialog
-            Stage stage = (Stage) studentIdField.getScene().getWindow();
-            stage.close();
         }
     }
 
@@ -118,10 +128,6 @@ public class AddStudentDialogController {
         nameField.setText(student.getName());
         emailField.setText(student.getEmail());
         contactNumberField.setText(student.getContactNumber());
-        roleComboBox.setValue(student.getRole());
-
-        // Disable student ID field in edit mode
-        studentIdField.setDisable(true);
     }
 
     private boolean validateInput() {
@@ -149,10 +155,6 @@ public class AddStudentDialogController {
 
         if (contactNumberField.getText().trim().isEmpty()) {
             errors.append("Contact Number is required\n");
-        }
-
-        if (roleComboBox.getValue() == null) {
-            errors.append("Role is required\n");
         }
 
         if (errors.length() > 0) {

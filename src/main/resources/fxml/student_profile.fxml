@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.StudentProfileController">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <Label text="My Profile" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    
+    <GridPane vgap="10" hgap="10">
+        <Label text="Full Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label fx:id="fullNameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        
+        <Label text="Student ID:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Label fx:id="studentIdLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        
+        <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        
+        <Label text="Phone:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="phoneField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        
+        <Label text="Books Borrowed:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <Label fx:id="booksBorrowedLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        
+        <Label text="Maximum Books:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <Label fx:id="maxBooksLabel" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Update Profile" onAction="#handleUpdateProfile"/>
+        <Button text="Back to Dashboard" onAction="#handleBackToDashboard"/>
+    </HBox>
+</VBox> 

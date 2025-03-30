@@ -25,9 +25,6 @@
         
         <Label text="Contact Number:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
         <TextField fx:id="contactNumberField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        
-        <Label text="Role:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="roleComboBox" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
     </GridPane>
     
     <HBox spacing="10" alignment="CENTER">

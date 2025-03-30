@@ -269,4 +269,23 @@ public class BorrowingService {
             return query.getResultList();
         }
     }
+
+    public List<Borrowing> getCurrentBorrowings() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Borrowing> query = session.createQuery(
+                    "FROM Borrowing b WHERE b.returnDate IS NULL", Borrowing.class);
+            return query.getResultList();
+        }
+    }
+
+    public double getTotalUnpaidFines() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Borrowing> query = session.createQuery(
+                    "FROM Borrowing b WHERE b.fineAmount > 0 AND b.finePaid = false", Borrowing.class);
+            List<Borrowing> borrowings = query.getResultList();
+            return borrowings.stream()
+                    .mapToDouble(Borrowing::getFineAmount)
+                    .sum();
+        }
+    }
 }
