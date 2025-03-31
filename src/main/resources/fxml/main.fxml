@@ -27,9 +27,14 @@
     <!-- Menu Bar -->
     <MenuBar styleClass="menu-bar">
         <Menu text="File">
-            <MenuItem text="Toggle Theme" onAction="#handleToggleTheme"/>
-            <SeparatorMenuItem/>
-            <MenuItem text="Exit" onAction="#handleExit"/>
+            <items>
+                <MenuItem fx:id="toggleThemeMenuItem" onAction="#handleToggleTheme" text="Toggle Theme" />
+                <SeparatorMenuItem />
+                <MenuItem fx:id="myAccountMenuItem" onAction="#handleMyAccount" text="My Account" />
+                <MenuItem fx:id="logoutMenuItem" onAction="#handleLogout" text="Logout" />
+                <SeparatorMenuItem />
+                <MenuItem fx:id="exitMenuItem" onAction="#handleExit" text="Exit" />
+            </items>
         </Menu>
         <Menu text="Borrowings">
             <MenuItem text="Issue Book" onAction="#handleIssueBook"/>
@@ -117,29 +122,40 @@
         </Tab>
 
         <Tab text="Borrowings" closable="false">
-            <VBox spacing="10" styleClass="content-container">
-                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="action-bar">
-                    <TextField fx:id="borrowingSearchField" promptText="Search borrowings..." 
-                             HBox.hgrow="ALWAYS"/>
-                    <Button text="Search" onAction="#handleSearchBorrowings" 
-                            styleClass="action-button"/>
-                    <Button text="View All" onAction="#handleViewBorrowingHistory" 
-                            styleClass="primary-button"/>
+            <VBox spacing="10">
+                <HBox spacing="10" alignment="CENTER">
+                    <TextField fx:id="borrowingSearchField" HBox.hgrow="ALWAYS" promptText="Search borrowings..."/>
+                    <Button text="Search" onAction="#handleSearchBorrowings"/>
+                    <Button fx:id="returnBookButton" text="Return Book" onAction="#handleReturnBook"/>
                 </HBox>
-
                 <TableView fx:id="borrowingsTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="borrowingIdColumn" text="ID"/>
-                        <TableColumn fx:id="borrowingBookColumn" text="Book"/>
-                        <TableColumn fx:id="borrowingStudentColumn" text="Student"/>
-                        <TableColumn fx:id="borrowingDateColumn" text="Borrow Date"/>
-                        <TableColumn fx:id="borrowingDueDateColumn" text="Due Date"/>
-                        <TableColumn fx:id="borrowingStatusColumn" text="Status"/>
+                        <TableColumn text="ID" fx:id="borrowingIdColumn"/>
+                        <TableColumn text="Book" fx:id="borrowingBookColumn"/>
+                        <TableColumn text="Student" fx:id="borrowingStudentColumn"/>
+                        <TableColumn text="Borrow Date" fx:id="borrowingDateColumn"/>
+                        <TableColumn text="Due Date" fx:id="borrowingDueDateColumn"/>
+                        <TableColumn text="Status" fx:id="borrowingStatusColumn"/>
                     </columns>
                 </TableView>
-                <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Button text="Return Book" onAction="#handleReturnBook" fx:id="returnBookButton"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="Book Requests" closable="false">
+            <VBox spacing="10">
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="approveRequestButton" text="Approve Request" onAction="#handleApproveRequest"/>
+                    <Button fx:id="rejectRequestButton" text="Reject Request" onAction="#handleRejectRequest"/>
                 </HBox>
+                <TableView fx:id="requestsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Book Title" fx:id="requestBookTitleColumn"/>
+                        <TableColumn text="Student Name" fx:id="requestStudentNameColumn"/>
+                        <TableColumn text="Request Date" fx:id="requestDateColumn"/>
+                        <TableColumn text="Due Date" fx:id="requestDueDateColumn"/>
+                        <TableColumn text="Status" fx:id="requestStatusColumn"/>
+                    </columns>
+                </TableView>
             </VBox>
         </Tab>
 

@@ -25,5 +25,6 @@
         <mapping class="com.library.model.BookCopy"/>
         <mapping class="com.library.model.Student"/>
         <mapping class="com.library.model.Borrowing"/>
+        <mapping class="com.library.model.BookRequest"/>
     </session-factory>
 </hibernate-configuration> 

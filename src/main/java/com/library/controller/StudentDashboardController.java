@@ -4,6 +4,7 @@ import com.library.model.Book;
 import com.library.model.BookRequest;
 import com.library.model.Student;
 import com.library.model.StudentProfile;
+import com.library.model.RequestStatus;
 import com.library.service.BookService;
 import com.library.service.StudentService;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,18 +16,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import java.io.IOException;
+import com.library.model.Borrowing;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.layout.VBox;
+import com.library.model.User;
+import java.util.prefs.Preferences;
+import java.time.format.DateTimeFormatter;
+import com.library.service.BorrowingService;
+import java.io.IOException;
 
 public class StudentDashboardController {
     @FXML
     private Label welcomeLabel;
     @FXML
-    private TextField searchField;
+    private TextField bookSearchField;
     @FXML
     private ComboBox<String> searchFilter;
     @FXML
@@ -37,98 +46,99 @@ public class StudentDashboardController {
     private TableColumn<Book, String> authorColumn;
     @FXML
     private TableColumn<Book, String> statusColumn;
+    @FXML
+    private Button requestBookButton;
 
     @FXML
     private TableView<BookRequest> requestsTable;
     @FXML
     private TableColumn<BookRequest, String> requestBookTitleColumn;
     @FXML
-    private TableColumn<BookRequest, String> requestDateColumn;
+    private TableColumn<BookRequest, LocalDateTime> requestDateColumn;
     @FXML
-    private TableColumn<BookRequest, String> dueDateColumn;
+    private TableColumn<BookRequest, LocalDateTime> requestDueDateColumn;
     @FXML
     private TableColumn<BookRequest, String> requestStatusColumn;
 
-    private StudentService studentService = new StudentService();
-    private BookService bookService = new BookService();
+    @FXML
+    private TableView<Borrowing> borrowingsTable;
+    @FXML
+    private TableColumn<Borrowing, String> borrowingBookTitleColumn;
+    @FXML
+    private TableColumn<Borrowing, LocalDate> borrowingDateColumn;
+    @FXML
+    private TableColumn<Borrowing, LocalDate> borrowingDueDateColumn;
+    @FXML
+    private TableColumn<Borrowing, String> borrowingStatusColumn;
+
+    private final BookService bookService;
+    private final StudentService studentService;
+    private final BorrowingService borrowingService;
     private Student currentStudent;
+    private User currentUser;
     private ObservableList<Book> books = FXCollections.observableArrayList();
     private ObservableList<BookRequest> requests = FXCollections.observableArrayList();
 
+    public StudentDashboardController() {
+        this.bookService = new BookService();
+        this.studentService = new StudentService();
+        this.borrowingService = new BorrowingService();
+    }
+
     @FXML
     public void initialize() {
-        // Initialize book table columns
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
-        statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().isAvailable() ? "Available" : "Not Available"));
+        try {
+            // Setup tables
+            setupBooksTable();
+            setupRequestsTable();
+            setupBorrowingsTable();
 
-        // Set default filter value
-        searchFilter.setValue("All");
-
-        // Initialize request table columns
-        requestBookTitleColumn.setCellValueFactory(cellData -> {
-            Book book = bookService.getBookById((long) cellData.getValue().getBookId());
-            return new SimpleStringProperty(book != null ? book.getTitle() : "Unknown");
-        });
-        requestDateColumn.setCellValueFactory(cellData -> {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            return new SimpleStringProperty(cellData.getValue().getRequestDate().format(formatter));
-        });
-        dueDateColumn.setCellValueFactory(cellData -> {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            return new SimpleStringProperty(cellData.getValue().getDueDate().format(formatter));
-        });
-        requestStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-        // Set up double-click handler for books table
-        booksTable.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
-                if (selectedBook != null) {
-                    handleBookRequest(selectedBook);
+            // Add listeners to search fields
+            bookSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue.isEmpty()) {
+                    loadBooks();
                 }
-            }
-        });
+            });
 
-        // Load initial data
-        loadBooks();
-        loadRequests();
+            // Load only books initially
+            loadBooks();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to initialize student dashboard: " + e.getMessage());
+        }
+    }
+
+    public void setUser(User user) {
+        this.currentUser = user;
+        // Get the student associated with this user
+        this.currentStudent = studentService.getStudentByEmail(user.getEmail());
+        if (currentStudent != null) {
+            welcomeLabel.setText("Welcome, " + currentStudent.getName());
+            loadInitialData();
+        } else {
+            showAlert("Error", "Student information not found.");
+        }
     }
 
     public void setCurrentStudent(Student student) {
         this.currentStudent = student;
         welcomeLabel.setText("Welcome, " + student.getName());
+        loadInitialData();
     }
 
     @FXML
-    private void handleSearch() {
-        String searchTerm = searchField.getText().trim();
-        if (!searchTerm.isEmpty()) {
-            List<Book> searchResults;
-            String filter = searchFilter.getValue();
-
-            switch (filter) {
-                case "Title":
-                    searchResults = bookService.searchBooksByTitle(searchTerm);
-                    break;
-                case "Author":
-                    searchResults = bookService.searchBooksByAuthor(searchTerm);
-                    break;
-                case "Category":
-                    searchResults = bookService.searchBooksByCategory(searchTerm);
-                    break;
-                default:
-                    searchResults = bookService.searchBooks(searchTerm);
+    private void handleSearchBooks() {
+        String searchText = bookSearchField.getText().trim();
+        try {
+            List<Book> books;
+            if (searchText.isEmpty()) {
+                books = bookService.getAllBooks();
+            } else {
+                books = bookService.searchBooks(searchText);
             }
-
-            // Filter to only show available books
-            searchResults = searchResults.stream()
-                    .filter(Book::isAvailable)
-                    .toList();
-            books.setAll(searchResults);
-        } else {
-            loadBooks();
+            booksTable.setItems(FXCollections.observableArrayList(books));
+        } catch (Exception e) {
+            showAlert("Error", "Failed to search books: " + e.getMessage());
         }
     }
 
@@ -196,10 +206,48 @@ public class StudentDashboardController {
         }
     }
 
+    @FXML
+    private void handleMyAccount() {
+        try {
+            // Get current student
+            if (currentStudent == null) {
+                showAlert("Error", "Student information not found.");
+                return;
+            }
+
+            // Load account dialog
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/account_dialog.fxml"));
+            Parent root = loader.load();
+            AccountDialogController controller = loader.getController();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("My Account");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            dialogStage.setResizable(false);
+
+            controller.setStudent(currentStudent);
+            controller.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
+
+            // Refresh student data after any changes
+            Student updatedStudent = studentService.getStudentById(currentStudent.getId());
+            if (updatedStudent != null) {
+                setCurrentStudent(updatedStudent);
+            }
+        } catch (Exception e) {
+            showAlert("Error", "Failed to open account dialog: " + e.getMessage());
+        }
+    }
+
     private void loadBooks() {
-        List<Book> availableBooks = bookService.getAvailableBooks();
-        books.setAll(availableBooks);
-        booksTable.setItems(books);
+        try {
+            List<Book> books = bookService.getAllBooks();
+            booksTable.setItems(FXCollections.observableArrayList(books));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load books: " + e.getMessage());
+        }
     }
 
     private void loadRequests() {
@@ -214,5 +262,120 @@ public class StudentDashboardController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void showBookDetails(Book book) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/book_details_dialog.fxml"));
+            Parent root = loader.load();
+            BookDetailsDialogController controller = loader.getController();
+            controller.setBook(book, false); // false for student view
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Book Details: " + book.getTitle());
+            dialogStage.setScene(new Scene(root, 800, 600));
+            dialogStage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to open book details: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleRequestBook() {
+        Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
+        if (selectedBook == null) {
+            showAlert("No Selection", "Please select a book to request.");
+            return;
+        }
+
+        try {
+            // Check if student can borrow more books
+            if (currentStudent.getBooksBorrowed() >= currentStudent.getMaxBooks()) {
+                showAlert("Cannot Request", "You have reached the maximum number of books you can borrow.");
+                return;
+            }
+
+            // Submit the request
+            studentService.requestBook(currentStudent.getId(), selectedBook.getId(), LocalDateTime.now().plusDays(14));
+            showAlert("Success", "Book request submitted successfully!");
+            loadRequests(); // Refresh requests table
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to submit book request: " + e.getMessage());
+        }
+    }
+
+    private void setupBooksTable() {
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        statusColumn.setCellValueFactory(cellData -> {
+            Book book = cellData.getValue();
+            long availableCopies = book.getCopies().stream()
+                    .filter(copy -> "Available".equals(copy.getStatus()))
+                    .count();
+            return new SimpleStringProperty(availableCopies > 0 ? "Available" : "Not Available");
+        });
+
+        // Add double-click handler for book details
+        booksTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
+                if (selectedBook != null) {
+                    showBookDetails(selectedBook);
+                }
+            }
+        });
+
+        // Enable/disable request button based on selection
+        requestBookButton.setDisable(true);
+        booksTable.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    boolean isEnabled = newSelection != null &&
+                            newSelection.getCopies().stream()
+                                    .anyMatch(copy -> "Available".equals(copy.getStatus()));
+                    requestBookButton.setDisable(!isEnabled);
+                });
+    }
+
+    private void setupRequestsTable() {
+        requestBookTitleColumn
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBook().getTitle()));
+        requestDateColumn.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        requestDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        requestStatusColumn
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
+    }
+
+    private void setupBorrowingsTable() {
+        borrowingBookTitleColumn
+                .setCellValueFactory(
+                        cellData -> new SimpleStringProperty(cellData.getValue().getBookCopy().getBook().getTitle()));
+        borrowingDateColumn.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
+        borrowingDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        borrowingStatusColumn.setCellValueFactory(cellData -> {
+            Borrowing borrowing = cellData.getValue();
+            String status = borrowing.getReturnDate() != null ? "Returned" : "Borrowed";
+            if (borrowing.getReturnDate() == null && borrowing.getDueDate().isBefore(LocalDate.now())) {
+                status = "Overdue";
+            }
+            return new SimpleStringProperty(status);
+        });
+    }
+
+    private void loadInitialData() {
+        loadBooks();
+        loadRequests();
+        loadBorrowings();
+    }
+
+    private void loadBorrowings() {
+        try {
+            List<Borrowing> borrowings = borrowingService.getStudentBorrowings(currentStudent.getId());
+            borrowingsTable.setItems(FXCollections.observableArrayList(borrowings));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load borrowings: " + e.getMessage());
+        }
     }
 }

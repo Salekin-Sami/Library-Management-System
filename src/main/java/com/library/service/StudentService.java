@@ -12,6 +12,9 @@ import com.library.model.BookRequest;
 import com.library.util.DatabaseUtil;
 import org.mindrot.jbcrypt.BCrypt;
 import com.library.model.UserRole;
+import com.library.util.PasswordUtil;
+import com.library.model.Book;
+import com.library.model.RequestStatus;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -277,46 +280,75 @@ public class StudentService {
     }
 
     public boolean requestBook(Long studentId, Long bookId, LocalDateTime dueDate) {
-        String sql = "INSERT INTO book_requests (student_id, book_id, status, due_date) VALUES (?, ?, 'pending', ?)";
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            try {
+                Student student = session.get(Student.class, studentId);
+                Book book = session.get(Book.class, bookId);
 
-        try (Connection conn = DatabaseUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+                if (student == null || book == null) {
+                    return false;
+                }
 
-            stmt.setLong(1, studentId);
-            stmt.setLong(2, bookId);
-            stmt.setTimestamp(3, Timestamp.valueOf(dueDate));
+                BookRequest request = new BookRequest();
+                request.setStudent(student);
+                request.setBook(book);
+                request.setDueDate(dueDate);
+                request.setStatus(RequestStatus.PENDING);
 
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+                session.persist(request);
+                transaction.commit();
+                return true;
+            } catch (Exception e) {
+                transaction.rollback();
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 
     public List<BookRequest> getStudentRequests(Long studentId) {
-        String sql = "SELECT * FROM book_requests WHERE student_id = ? ORDER BY request_date DESC";
-        List<BookRequest> requests = new ArrayList<>();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<BookRequest> query = session.createQuery(
+                    "from BookRequest where student.id = :studentId order by requestDate desc",
+                    BookRequest.class);
+            query.setParameter("studentId", studentId);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
-        try (Connection conn = DatabaseUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+    public List<BookRequest> getAllPendingRequests() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<BookRequest> query = session.createQuery(
+                    "from BookRequest where status = :status order by requestDate desc",
+                    BookRequest.class);
+            query.setParameter("status", RequestStatus.PENDING);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
-            stmt.setLong(1, studentId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                BookRequest request = new BookRequest();
-                request.setId(rs.getLong("id"));
-                request.setStudentId(rs.getLong("student_id"));
-                request.setBookId(rs.getLong("book_id"));
-                request.setRequestDate(rs.getTimestamp("request_date").toLocalDateTime());
-                request.setStatus(rs.getString("status"));
-                request.setDueDate(rs.getTimestamp("due_date").toLocalDateTime());
-                requests.add(request);
+    public void updateRequestStatus(Long requestId, RequestStatus status) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            BookRequest request = session.get(BookRequest.class, requestId);
+            if (request != null) {
+                request.setStatus(status);
+                session.merge(request);
             }
-        } catch (SQLException e) {
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             e.printStackTrace();
         }
-        return requests;
     }
 
     public Student getStudentByEmail(String email) {
@@ -325,6 +357,42 @@ public class StudentService {
                     "from Student where email = :email", Student.class);
             query.setParameter("email", email);
             return query.uniqueResult();
+        }
+    }
+
+    public void updateStudentPassword(Long studentId, String newPassword) throws SQLException {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            try {
+                // Update password in users table
+                String updateUserSql = "UPDATE users SET password_hash = ? WHERE id = ?";
+                try (Connection conn = DatabaseUtil.getConnection();
+                        PreparedStatement stmt = conn.prepareStatement(updateUserSql)) {
+                    stmt.setString(1, newPassword); // Store password as is (since it's the student ID)
+                    stmt.setLong(2, studentId);
+                    stmt.executeUpdate();
+                }
+
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+    }
+
+    public boolean validatePassword(Long studentId, String currentPassword) throws SQLException {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            String sql = "SELECT password_hash FROM users WHERE id = (SELECT id FROM students WHERE id = ?)";
+            Query query = session.createNativeQuery(sql);
+            query.setParameter(1, studentId);
+            String storedHash = (String) query.getSingleResult();
+
+            session.getTransaction().commit();
+
+            return PasswordUtil.verifyPassword(currentPassword, storedHash);
         }
     }
 }

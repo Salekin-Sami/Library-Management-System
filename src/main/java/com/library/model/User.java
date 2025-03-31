@@ -16,9 +16,9 @@ public class User {
     public User() {
     }
 
-    public User(String email, String passwordHash, String role) {
+    public User(Integer id, String email, String role) {
+        this.id = id;
         this.email = email;
-        this.passwordHash = passwordHash;
         this.role = role;
     }
 

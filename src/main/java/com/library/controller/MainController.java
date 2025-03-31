@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javafx.stage.Modality;
 import javafx.scene.Scene;
@@ -24,6 +25,8 @@ import javafx.scene.layout.VBox;
 import com.library.model.User;
 import java.util.prefs.Preferences;
 import java.time.format.DateTimeFormatter;
+import com.library.model.BookRequest;
+import com.library.model.RequestStatus;
 
 public class MainController {
     private final BookService bookService;
@@ -81,6 +84,23 @@ public class MainController {
     private Button returnBookButton;
 
     @FXML
+    private TableView<BookRequest> requestsTable;
+    @FXML
+    private TableColumn<BookRequest, String> requestBookTitleColumn;
+    @FXML
+    private TableColumn<BookRequest, String> requestStudentNameColumn;
+    @FXML
+    private TableColumn<BookRequest, LocalDateTime> requestDateColumn;
+    @FXML
+    private TableColumn<BookRequest, LocalDateTime> requestDueDateColumn;
+    @FXML
+    private TableColumn<BookRequest, String> requestStatusColumn;
+    @FXML
+    private Button approveRequestButton;
+    @FXML
+    private Button rejectRequestButton;
+
+    @FXML
     private TextField bookSearchField;
     @FXML
     private TextField studentSearchField;
@@ -116,6 +136,7 @@ public class MainController {
             setupBookTable();
             setupStudentTable();
             setupBorrowingTable();
+            setupRequestsTable();
 
             // Add listeners to search fields
             bookSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -160,6 +181,7 @@ public class MainController {
             setupBookTable();
             setupStudentTable();
             setupBorrowingTable();
+            setupRequestsTable();
             loadInitialData();
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,12 +285,35 @@ public class MainController {
                 });
     }
 
+    private void setupRequestsTable() {
+        requestBookTitleColumn
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBook().getTitle()));
+        requestStudentNameColumn
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStudent().getName()));
+        requestDateColumn.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        requestDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        requestStatusColumn
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
+
+        // Enable/disable approve/reject buttons based on selection
+        approveRequestButton.setDisable(true);
+        rejectRequestButton.setDisable(true);
+        requestsTable.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    boolean isEnabled = newSelection != null &&
+                            newSelection.getStatus() == RequestStatus.PENDING;
+                    approveRequestButton.setDisable(!isEnabled);
+                    rejectRequestButton.setDisable(!isEnabled);
+                });
+    }
+
     private void loadInitialData() {
         try {
             loadBooks();
             loadStudents();
             loadBorrowings();
             loadRecentActivities();
+            refreshRequestsTable();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to load initial data: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -762,6 +807,104 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "Failed to load student history: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleMyAccount() {
+        try {
+            // Get current student
+            Student currentStudent = studentService.getStudentByEmail(currentUser.getEmail());
+            if (currentStudent == null) {
+                showAlert("Error", "Student information not found.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Load account dialog
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/account_dialog.fxml"));
+            Parent root = loader.load();
+            AccountDialogController controller = loader.getController();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("My Account");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            dialogStage.setResizable(false);
+
+            controller.setStudent(currentStudent);
+            controller.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
+
+            // Refresh tables after any changes
+            refreshStudentsTable();
+        } catch (Exception e) {
+            showAlert("Error", "Failed to open account dialog: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleApproveRequest() {
+        BookRequest selectedRequest = requestsTable.getSelectionModel().getSelectedItem();
+        if (selectedRequest == null) {
+            showAlert("No Selection", "Please select a request to approve.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Create a new borrowing from the request
+            Borrowing borrowing = new Borrowing();
+            borrowing.setStudent(selectedRequest.getStudent());
+            borrowing.setBookCopy(selectedRequest.getBook().getCopies().get(0)); // Get first available copy
+            borrowing.setBorrowDate(LocalDate.now());
+            borrowing.setDueDate(selectedRequest.getDueDate().toLocalDate());
+            borrowing.setReturnDate(null); // Set return date to null for new borrowings
+
+            // Update request status
+            selectedRequest.setStatus(RequestStatus.APPROVED);
+
+            // Save changes
+            borrowingService.addBorrowing(borrowing);
+            studentService.updateRequestStatus(selectedRequest.getId(), RequestStatus.APPROVED);
+
+            // Refresh tables
+            refreshRequestsTable();
+            refreshBorrowingsTable();
+            refreshBooksTable();
+
+            showAlert("Success", "Book request approved successfully!", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to approve request: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleRejectRequest() {
+        BookRequest selectedRequest = requestsTable.getSelectionModel().getSelectedItem();
+        if (selectedRequest == null) {
+            showAlert("No Selection", "Please select a request to reject.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Update request status
+            selectedRequest.setStatus(RequestStatus.REJECTED);
+            studentService.updateRequestStatus(selectedRequest.getId(), RequestStatus.REJECTED);
+
+            // Refresh requests table
+            refreshRequestsTable();
+
+            showAlert("Success", "Book request rejected successfully!", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to reject request: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void refreshRequestsTable() {
+        try {
+            List<BookRequest> requests = studentService.getAllPendingRequests();
+            requestsTable.setItems(FXCollections.observableArrayList(requests));
+        } catch (Exception e) {
+            showAlert("Error", "Failed to refresh requests table: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 

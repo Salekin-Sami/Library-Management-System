@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BorrowingService {
@@ -286,6 +287,19 @@ public class BorrowingService {
             return borrowings.stream()
                     .mapToDouble(Borrowing::getFineAmount)
                     .sum();
+        }
+    }
+
+    public List<Borrowing> getStudentBorrowings(Long studentId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session
+                    .createQuery("FROM Borrowing b WHERE b.student.id = :studentId ORDER BY b.borrowDate DESC",
+                            Borrowing.class)
+                    .setParameter("studentId", studentId)
+                    .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 }

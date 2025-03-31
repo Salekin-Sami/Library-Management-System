@@ -32,8 +32,8 @@ public class AuthService {
         }
     }
 
-    public boolean login(String email, String password, String role) {
-        String sql = "SELECT id, password_hash FROM users WHERE email = ? AND role = ?";
+    public User login(String email, String password, String role) {
+        String sql = "SELECT id, password_hash, role FROM users WHERE email = ? AND role = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -46,13 +46,17 @@ public class AuthService {
                 String storedHash = rs.getString("password_hash");
                 if (BCrypt.checkpw(password, storedHash)) {
                     currentUserId = rs.getInt("id");
-                    return true;
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setEmail(email);
+                    user.setRole(rs.getString("role"));
+                    return user;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public int getCurrentUserId() {

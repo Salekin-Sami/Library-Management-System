@@ -79,76 +79,46 @@ public class LoginController {
         String password = passwordField.getText().trim();
         String role = roleComboBox.getValue();
 
-        if (email.isEmpty() || password.isEmpty() || role == null) {
-            showAlert("Error", "Please fill in all fields!");
+        if (email.isEmpty() || password.isEmpty()) {
+            showAlert("Error", "Please enter both email and password.");
             return;
         }
 
-        if ("admin".equals(role)) {
-            handleAdminLogin(email, password);
-        } else {
-            handleStudentLogin(email, password);
-        }
-    }
+        try {
+            User user = authService.login(email, password, role);
+            if (user != null) {
+                // Save credentials if remember me is checked
+                if (rememberMeCheckbox.isSelected()) {
+                    Preferences prefs = Preferences.userRoot().node(PREF_NODE);
+                    prefs.put(KEY_EMAIL, email);
+                    prefs.put(KEY_ROLE, user.getRole());
+                    prefs.putBoolean("remember", true);
+                }
 
-    private void handleAdminLogin(String email, String password) {
-        if (authService.login(email, password, "admin")) {
-            saveCredentials();
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+                // Load appropriate dashboard based on role
+                String fxmlPath = user.getRole().equals("ADMIN") ? "/fxml/main.fxml" : "/fxml/student_dashboard.fxml";
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                 Parent root = loader.load();
-                MainController controller = loader.getController();
 
-                // Create and set the user object
-                User user = new User();
-                user.setEmail(email);
-                user.setRole("admin");
-                controller.setUser(user);
+                if (user.getRole().equals("ADMIN")) {
+                    MainController controller = loader.getController();
+                    controller.setUser(user);
+                } else {
+                    StudentDashboardController controller = loader.getController();
+                    controller.setUser(user);
+                }
 
                 Stage stage = (Stage) emailField.getScene().getWindow();
                 Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+                stage.setTitle("Library Management System - " + user.getRole());
                 stage.setScene(scene);
-                stage.setTitle("Library Management System - Admin Dashboard");
                 stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                showAlert("Error", "Failed to load admin dashboard: " + e.getMessage());
+            } else {
+                showAlert("Error", "Invalid email or password.");
             }
-        } else {
-            showAlert("Error", "Invalid email or password!");
-        }
-    }
-
-    private void handleStudentLogin(String email, String password) {
-        if (authService.login(email, password, "student")) {
-            saveCredentials();
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/student_dashboard.fxml"));
-                Parent root = loader.load();
-                StudentDashboardController controller = loader.getController();
-
-                // Get student details from the database
-                Student student = studentService.getStudentByEmail(email);
-                if (student != null) {
-                    controller.setCurrentStudent(student);
-
-                    Stage stage = (Stage) emailField.getScene().getWindow();
-                    Scene scene = new Scene(root);
-                    scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-
-                    stage.setScene(scene);
-                    stage.setTitle("Library Management System - Student Dashboard");
-                    stage.show();
-                } else {
-                    showAlert("Error", "Student profile not found!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                showAlert("Error", "Failed to load student dashboard: " + e.getMessage());
-            }
-        } else {
-            showAlert("Error", "Invalid email or password!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Login failed: " + e.getMessage());
         }
     }
 

@@ -1,27 +1,37 @@
 package com.library.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "book_requests")
 public class BookRequest {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long studentId;
-    private Long bookId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+
+    @Column(name = "request_date", nullable = false)
     private LocalDateTime requestDate;
-    private String status;
+
+    @Column(name = "due_date", nullable = false)
     private LocalDateTime dueDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RequestStatus status = RequestStatus.PENDING;
+
     public BookRequest() {
-    }
-
-    public BookRequest(Long studentId, Long bookId, String status, LocalDateTime dueDate) {
-        this.studentId = studentId;
-        this.bookId = bookId;
         this.requestDate = LocalDateTime.now();
-        this.status = status;
-        this.dueDate = dueDate;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -30,20 +40,20 @@ public class BookRequest {
         this.id = id;
     }
 
-    public Long getStudentId() {
-        return studentId;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
-    public Long getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public LocalDateTime getRequestDate() {
@@ -54,14 +64,6 @@ public class BookRequest {
         this.requestDate = requestDate;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public LocalDateTime getDueDate() {
         return dueDate;
     }
@@ -70,15 +72,11 @@ public class BookRequest {
         this.dueDate = dueDate;
     }
 
-    public boolean isPending() {
-        return "pending".equalsIgnoreCase(status);
+    public RequestStatus getStatus() {
+        return status;
     }
 
-    public boolean isApproved() {
-        return "approved".equalsIgnoreCase(status);
-    }
-
-    public boolean isRejected() {
-        return "rejected".equalsIgnoreCase(status);
+    public void setStatus(RequestStatus status) {
+        this.status = status;
     }
 }
