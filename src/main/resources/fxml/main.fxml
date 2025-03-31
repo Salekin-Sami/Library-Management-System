@@ -24,45 +24,12 @@
         <Button text="Logout" onAction="#handleLogout" styleClass="logout-button"/>
     </HBox>
 
-    <!-- Quick Stats Section -->
-    <HBox spacing="20" styleClass="stats-container">
-        <VBox styleClass="stat-card">
-            <Label text="Total Books" styleClass="stat-title"/>
-            <Label fx:id="totalBooksLabel" styleClass="stat-value"/>
-        </VBox>
-        <VBox styleClass="stat-card">
-            <Label text="Active Students" styleClass="stat-title"/>
-            <Label fx:id="activeStudentsLabel" styleClass="stat-value"/>
-        </VBox>
-        <VBox styleClass="stat-card">
-            <Label text="Borrowed Books" styleClass="stat-title"/>
-            <Label fx:id="borrowedBooksLabel" styleClass="stat-value"/>
-        </VBox>
-        <VBox styleClass="stat-card">
-            <Label text="Overdue Books" styleClass="stat-title"/>
-            <Label fx:id="overdueBooksLabel" styleClass="stat-value"/>
-        </VBox>
-    </HBox>
-
     <!-- Menu Bar -->
     <MenuBar styleClass="menu-bar">
         <Menu text="File">
             <MenuItem text="Toggle Theme" onAction="#handleToggleTheme"/>
             <SeparatorMenuItem/>
             <MenuItem text="Exit" onAction="#handleExit"/>
-        </Menu>
-        <Menu text="Books">
-            <MenuItem text="Add Book" onAction="#handleAddBook"/>
-            <MenuItem text="Add Copy" onAction="#handleAddCopy"/>
-            <MenuItem text="Edit Book" onAction="#handleEditBook"/>
-            <MenuItem text="Delete Book" onAction="#handleDeleteBook"/>
-            <SeparatorMenuItem/>
-            <MenuItem text="Add Classic Books" onAction="#handleAddClassicBooks"/>
-        </Menu>
-        <Menu text="Students">
-            <MenuItem text="Add Student" onAction="#handleAddStudent"/>
-            <MenuItem text="Edit Student" onAction="#handleEditStudent"/>
-            <MenuItem text="Delete Student" onAction="#handleDeleteStudent"/>
         </Menu>
         <Menu text="Borrowings">
             <MenuItem text="Issue Book" onAction="#handleIssueBook"/>

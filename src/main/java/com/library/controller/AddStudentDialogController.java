@@ -34,8 +34,6 @@ public class AddStudentDialogController {
     private TextField emailField;
     @FXML
     private TextField contactNumberField;
-    @FXML
-    private ComboBox<UserRole> roleComboBox;
 
     private Student editingStudent;
 
@@ -46,9 +44,7 @@ public class AddStudentDialogController {
 
     @FXML
     public void initialize() {
-        // Remove role selection since it will always be student
-        roleComboBox.setVisible(false);
-        roleComboBox.setManaged(false);
+        // No initialization needed
     }
 
     @FXML

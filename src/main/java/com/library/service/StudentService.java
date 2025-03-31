@@ -11,6 +11,7 @@ import com.library.model.StudentProfile;
 import com.library.model.BookRequest;
 import com.library.util.DatabaseUtil;
 import org.mindrot.jbcrypt.BCrypt;
+import com.library.model.UserRole;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -168,49 +169,68 @@ public class StudentService {
         }
     }
 
-    public Student registerStudent(String email, String fullName,
-            String studentId, String phoneNumber) {
-        // First, register the user
-        try (Connection conn = DatabaseUtil.getConnection()) {
+    public Student registerStudent(String email, String fullName, String studentId, String phoneNumber) {
+        Connection conn = null;
+        Session session = null;
+        Transaction hibernateTransaction = null;
+
+        try {
+            // Get database connection
+            conn = DatabaseUtil.getConnection();
             conn.setAutoCommit(false);
+
+            // Insert into users table with student ID as password
+            String userSql = "INSERT INTO users (email, password_hash, role) VALUES (?, ?, 'STUDENT')";
+            PreparedStatement userStmt = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS);
+            userStmt.setString(1, email);
+            userStmt.setString(2, BCrypt.hashpw(studentId, BCrypt.gensalt())); // Use student ID as password
+            userStmt.executeUpdate();
+
+            // Create student record
+            Student student = new Student();
+            student.setEmail(email);
+            student.setName(fullName);
+            student.setStudentId(studentId);
+            student.setContactNumber(phoneNumber);
+            student.setRole(UserRole.STUDENT); // Set the role explicitly
+            student.setBooksBorrowed(0); // Initialize books borrowed
+            student.setMaxBooks(3); // Set default max books
+            // Note: createdAt and updatedAt are set in the Student constructor
+
+            // Save student using Hibernate
+            session = HibernateUtil.getSessionFactory().openSession();
+            hibernateTransaction = session.beginTransaction();
+            session.persist(student);
+            hibernateTransaction.commit();
+
+            // Commit the database transaction
+            conn.commit();
+
+            return student;
+        } catch (Exception e) {
+            // Rollback both transactions if any error occurs
             try {
-                // Insert into users table with student ID as password
-                String userSql = "INSERT INTO users (email, password_hash, role) VALUES (?, ?, 'student')";
-                PreparedStatement userStmt = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS);
-                userStmt.setString(1, email);
-                userStmt.setString(2, BCrypt.hashpw(studentId, BCrypt.gensalt())); // Use student ID as password
-                userStmt.executeUpdate();
-
-                // Create student record
-                Student student = new Student();
-                student.setEmail(email);
-                student.setName(fullName);
-                student.setStudentId(studentId);
-                student.setContactNumber(phoneNumber);
-
-                // Save student using Hibernate
-                Session session = HibernateUtil.getSessionFactory().openSession();
-                Transaction transaction = session.beginTransaction();
-                try {
-                    session.persist(student);
-                    transaction.commit();
-                    conn.commit();
-                    return student;
-                } catch (Exception e) {
-                    if (transaction != null) {
-                        transaction.rollback();
-                    }
+                if (hibernateTransaction != null && hibernateTransaction.isActive()) {
+                    hibernateTransaction.rollback();
+                }
+                if (conn != null) {
                     conn.rollback();
-                    throw new RuntimeException("Failed to create student record: " + e.getMessage());
-                } finally {
+                }
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            throw new RuntimeException("Failed to register student: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (session != null) {
                     session.close();
                 }
-            } catch (Exception e) {
-                conn.rollback();
-                throw new RuntimeException("Failed to register student: " + e.getMessage());
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException closeEx) {
+                closeEx.printStackTrace();
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Database error: " + e.getMessage());
         }
     }
 

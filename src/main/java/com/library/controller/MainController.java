@@ -97,17 +97,6 @@ public class MainController {
     private Label welcomeLabel;
 
     @FXML
-    private Label totalBooksLabel;
-    @FXML
-    private Label totalStudentsLabel;
-    @FXML
-    private Label currentBorrowingsLabel;
-    @FXML
-    private Label overdueBooksLabel;
-    @FXML
-    private Label totalFinesLabel;
-
-    @FXML
     private Label dateLabel;
 
     public MainController() {
@@ -280,7 +269,6 @@ public class MainController {
             loadStudents();
             loadBorrowings();
             loadRecentActivities();
-            updateStatistics();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to load initial data: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -319,31 +307,6 @@ public class MainController {
 
     private void loadRecentActivities() {
         // TODO: Implement recent activities loading
-    }
-
-    private void updateStatistics() {
-        try {
-            // Update total books
-            totalBooksLabel.setText(String.valueOf(bookService.getAllBooks().size()));
-
-            // Update total students
-            totalStudentsLabel.setText(String.valueOf(studentService.getAllStudents().size()));
-
-            // Update current borrowings
-            List<Borrowing> currentBorrowings = borrowingService.getCurrentBorrowings();
-            currentBorrowingsLabel.setText(String.valueOf(currentBorrowings.size()));
-
-            // Update overdue books
-            List<Borrowing> overdueBorrowings = borrowingService.getOverdueBorrowings();
-            overdueBooksLabel.setText(String.valueOf(overdueBorrowings.size()));
-
-            // Update total unpaid fines
-            double totalFines = borrowingService.getTotalUnpaidFines();
-            totalFinesLabel.setText(String.format("$%.2f", totalFines));
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to update statistics: " + e.getMessage(), Alert.AlertType.ERROR);
-        }
     }
 
     // Menu Item Handlers
@@ -820,17 +783,14 @@ public class MainController {
 
     private void refreshBooksTable() {
         booksTable.setItems(FXCollections.observableArrayList(bookService.getAllBooks()));
-        updateStatistics();
     }
 
     private void refreshStudentsTable() {
         studentsTable.setItems(FXCollections.observableArrayList(studentService.getAllStudents()));
-        updateStatistics();
     }
 
     private void refreshBorrowingsTable() {
         borrowingsTable.setItems(FXCollections.observableArrayList(borrowingService.getAllBorrowings()));
-        updateStatistics();
     }
 
     private void showBookDetails(Book book) {
