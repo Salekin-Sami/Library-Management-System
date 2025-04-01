@@ -6,9 +6,18 @@
     <session-factory>
         <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/library_db?createDatabaseIfNotExist=true</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/library_db?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">1336</property>
+
+        <!-- Connection Pool Settings -->
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.timeout">300</property>
+        <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
+        <property name="hibernate.c3p0.acquire_increment">5</property>
+        <property name="hibernate.c3p0.validate">true</property>
 
         <!-- SQL dialect -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -19,6 +28,14 @@
 
         <!-- Drop and re-create the database schema on startup -->
         <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Enable second level cache -->
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
+
+        <!-- Connection provider settings -->
+        <property name="hibernate.connection.provider_disables_autocommit">true</property>
+        <property name="hibernate.connection.autocommit">false</property>
 
         <!-- Entity mappings -->
         <mapping class="com.library.model.Book"/>

@@ -137,6 +137,18 @@ public class MainController {
         this.bookApiService = new BookApiService();
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Called when the FXML file is loaded. This method is responsible for:
+     * <ul>
+     *     <li>Setting the initial theme</li>
+     *     <li>Setting up tables</li>
+     *     <li>Adding listeners to search fields</li>
+     *     <li>Setting the current date</li>
+     *     <li>Loading initial data</li>
+     * </ul>
+     */
+/******  8bfe7999-77bd-4836-8835-6ba0a3747847  *******/
     @FXML
     public void initialize() {
         try {
@@ -181,6 +193,13 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Sets the current user and initializes the main view by setting up tables and loading data.
+     *
+     * @param user the current user
+     */
+/******  f8876ead-8775-478b-8ab3-f32a77f6d545  *******/
     public void setUser(User user) {
         try {
             this.currentUser = user;
@@ -203,6 +222,24 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Sets up the book table by setting up its columns and adding double-click handler to show book details.
+     *
+     * The columns are:
+     * <ul>
+     *     <li>ID</li>
+     *     <li>Title</li>
+     *     <li>Author</li>
+     *     <li>ISBN</li>
+     *     <li>Category</li>
+     *     <li>Status (Available/Not Available)</li>
+     *     <li>Total Copies</li>
+     * </ul>
+     *
+     * When a book is double-clicked, its details are shown in a dialog.
+     */
+/******  346f7db6-bf44-412e-9d1d-11320ae5cbde  *******/
     private void setupBookTable() {
         try {
             idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -237,6 +274,22 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Sets up the student table by setting up its columns and adding double-click handler to show student details.
+     *
+     * The columns are:
+     * <ul>
+     *     <li>ID</li>
+     *     <li>Name</li>
+     *     <li>ID Number</li>
+     *     <li>Email</li>
+     *     <li>Contact</li>
+     * </ul>
+     *
+     * When a student is double-clicked, their details are shown in a dialog.
+     */
+/******  add92c9b-6f59-4090-8df7-21801f77e38d  *******/
     private void setupStudentTable() {
         studentIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -255,6 +308,28 @@ public class MainController {
         });
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Sets up the borrowing table by setting up its columns and adding double-click handler to show borrowing details.
+     *
+     * The columns are:
+     * <ul>
+     *     <li>ID</li>
+     *     <li>Book</li>
+     *     <li>Student</li>
+     *     <li>Borrow Date</li>
+     *     <li>Due Date</li>
+     *     <li>Status</li>
+     *     <li>Fine</li>
+     * </ul>
+     *
+     * When a borrowing is double-clicked, its details are shown in a dialog.
+     *
+     * The fine amount column is added dynamically if it doesn't exist.
+     *
+     * The return button is enabled or disabled depending on the selection.
+     */
+/******  b2bb07ad-bea2-4d36-8df3-494535673265  *******/
     private void setupBorrowingTable() {
         borrowingIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         borrowingBookColumn
@@ -318,6 +393,13 @@ public class MainController {
                 });
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Loads initial data for the main view by calling individual load methods and
+     * refreshing the requests table. If any of the individual load methods throw an
+     * exception, an error alert is shown.
+     */
+/******  45385ff4-615d-47f4-a32e-65b28f59cb31  *******/
     private void loadInitialData() {
         try {
             loadBooks();
@@ -332,6 +414,12 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Loads all books from the database and sets the items in the books table.
+     * If an exception is thrown while loading the books, an error alert is shown.
+     */
+/******  1959e40b-231f-45e4-a42a-230615e6206c  *******/
     private void loadBooks() {
         try {
             List<Book> books = bookService.getAllBooks();
@@ -342,6 +430,12 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Loads all students from the database and sets the items in the students table.
+     * If an exception is thrown while loading the students, an error alert is shown.
+     */
+/******  3c0f93e8-f732-435f-a1df-45033b7c4b85  *******/
     private void loadStudents() {
         try {
             List<Student> students = studentService.getAllStudents();
@@ -428,6 +522,12 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Handles the "Add Book" menu item. Loads the add book dialog and refreshes
+     * the books table after adding a new book.
+     */
+/******  d1cb4a35-4926-45a7-92f3-a4f756372703  *******/
     @FXML
     private void handleAddBook() {
         try {
@@ -448,6 +548,15 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Handles the action of adding a new copy of the selected book.
+ * If no book is selected from the table, a warning alert is shown.
+ * On success, the books table is refreshed and a success alert is displayed.
+ * If an error occurs while adding the copy, an error alert is shown.
+ */
+
+/******  b5b733a2-1517-4371-9510-24418ae1de5e  *******/
     @FXML
     private void handleAddCopy() {
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
@@ -465,6 +574,14 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Handles the action of searching for books by title, author, or subject.
+     * If the search text is empty, all books are retrieved.
+     * On success, the books table is refreshed with the search results.
+     * If an error occurs while searching, an error alert is shown.
+     */
+/******  6bde81bc-abb7-4288-a353-95972ca53a49  *******/
     @FXML
     private void handleSearchBooks() {
         String searchText = bookSearchField.getText().trim();
@@ -481,6 +598,12 @@ public class MainController {
         }
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+    /**
+     * Handles the action of adding a new member.
+     * A warning alert is shown until the functionality is implemented.
+     */
+/******  291bd0ac-0266-4c04-b866-155c0427768a  *******/
     @FXML
     private void handleAddMember() {
         // TODO: Implement add member functionality
@@ -493,6 +616,12 @@ public class MainController {
         showAlert("Info", "Search Members functionality coming soon!");
     }
 
+    /**
+     * Handles the action of issuing a book to a member.
+     * If no book is selected from the table, a warning alert is shown.
+     * On success, the books table and borrowings table are refreshed.
+     * If an error occurs while issuing the book, an error alert is shown.
+     */
     @FXML
     private void handleIssueBook() {
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
@@ -513,6 +642,7 @@ public class MainController {
             dialogStage.setScene(new Scene(root));
             dialogStage.showAndWait();
 
+
             // Refresh tables after issuing the book
             refreshBooksTable();
             refreshBorrowingsTable();
@@ -521,6 +651,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of returning a borrowed book.
+     * If no borrowing is selected from the table, a warning alert is shown.
+     * On success, the borrowings table and books table are refreshed.
+     * If an error occurs while returning the book, an error alert is shown.
+     */
     @FXML
     private void handleReturnBook() {
         Borrowing selectedBorrowing = borrowingsTable.getSelectionModel().getSelectedItem();
@@ -562,11 +698,21 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of viewing overdue books.
+     * Loads all borrowing records, which include overdue ones, into the borrowings table.
+     */
+
     @FXML
     private void handleViewOverdueBooks() {
         loadBorrowings();
     }
 
+    /**
+     * Handles the action of generating a fine report.
+     * Loads the fine report dialog with all active borrowing records.
+     * On closing the dialog, the borrowings table is refreshed.
+     */
     @FXML
     private void handleFineReport() {
         try {
@@ -594,6 +740,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of viewing the borrowing history.
+     * Loads the borrowing history dialog, which shows all borrowing records.
+     * If an error occurs while loading the dialog, an error alert is shown.
+     */
     @FXML
     private void handleBorrowingHistory() {
         try {
@@ -609,6 +760,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of deleting a book.
+     * If no book is selected from the table, a warning alert is shown.
+     * On success, the books table is refreshed.
+     * If an error occurs while deleting the book, an error alert is shown.
+     */
     @FXML
     private void handleDeleteBook() {
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
@@ -635,6 +792,12 @@ public class MainController {
         });
     }
 
+    /**
+     * Handles the action of searching for borrowings by book title, author, student name, or student ID.
+     * If the search text is empty, all borrowings are retrieved.
+     * On success, the borrowings table is refreshed with the search results.
+     * If an error occurs while searching, an error alert is shown.
+     */
     @FXML
     private void handleSearchBorrowings() {
         String searchText = borrowingSearchField.getText().trim();
@@ -650,6 +813,13 @@ public class MainController {
             showAlert("Error", "Failed to search borrowings: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
+
+/**
+ * Handles the action of displaying overdue books.
+ * Retrieves a list of overdue borrowings from the borrowing service
+ * and updates the borrowings table with these records.
+ * If an error occurs during this process, an error alert is shown.
+ */
 
     @FXML
     private void handleOverdueBooks() {
@@ -703,6 +873,12 @@ public class MainController {
         showAlert("Info", "Edit Student functionality coming soon!");
     }
 
+    /**
+     * Handles the action of deleting a student.
+     * If no student is selected from the table, a warning alert is shown.
+     * On success, the students table is refreshed.
+     * If an error occurs while deleting the student, an error alert is shown.
+     */
     @FXML
     private void handleDeleteStudent() {
         Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
@@ -731,6 +907,11 @@ public class MainController {
         });
     }
 
+    /**
+     * Handles the action of adding a new student.
+     * Loads the add student dialog and refreshes the students table after adding a new student.
+     * If an error occurs while loading the dialog, an error alert is shown.
+     */
     @FXML
     private void handleAddStudent() {
         try {
@@ -750,6 +931,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of adding 20 classic books to the library.
+     * If an error occurs while adding the books, an error alert is shown.
+     * On success, the books table is refreshed.
+     */
     @FXML
     private void handleAddClassicBooks() {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
@@ -772,6 +958,11 @@ public class MainController {
         });
     }
 
+/**
+ * Toggles the application's theme between light and dark modes.
+ * Updates the root style class list to apply the appropriate theme.
+ */
+
     @FXML
     private void handleToggleTheme() {
         isDarkTheme = !isDarkTheme;
@@ -784,6 +975,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Confirms with the user whether they want to exit the application.
+     * If the user selects OK, the application is terminated.
+     */
     @FXML
     private void handleExit() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -798,6 +993,10 @@ public class MainController {
         });
     }
 
+    /**
+     * Shows an information dialog with a user guide for the Library Management System.
+     * The guide explains the features of the system for students and administrators.
+     */
     @FXML
     private void handleUserGuide() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -819,6 +1018,9 @@ public class MainController {
         alert.showAndWait();
     }
 
+    /**
+     * Shows an information dialog with version and feature information about the Library Management System.
+     */
     @FXML
     private void handleAbout() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -836,6 +1038,11 @@ public class MainController {
         alert.showAndWait();
     }
 
+    /**
+     * Handles the action of viewing the borrowing history of a selected student.
+     * Loads the student history dialog, which shows all borrowing records of the student.
+     * If an error occurs while loading the dialog, an error alert is shown.
+     */
     @FXML
     private void handleViewStudentHistory() {
         Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
@@ -862,6 +1069,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of viewing the account information of the current student.
+     * Loads the account dialog with the current student's information.
+     * If an error occurs while loading the dialog, an error alert is shown.
+     * After the dialog is closed, the students table is refreshed.
+     */
     @FXML
     private void handleMyAccount() {
         try {
@@ -893,6 +1106,14 @@ public class MainController {
             showAlert("Error", "Failed to open account dialog: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
+
+/**
+ * Handles the action of approving a book request.
+ * If no request is selected from the table, a warning alert is shown.
+ * On success, a new borrowing record is created, and the request status is updated to approved.
+ * The requests, borrowings, and books tables are refreshed.
+ * If an error occurs while approving the request, an error alert is shown.
+ */
 
     @FXML
     private void handleApproveRequest() {
@@ -929,6 +1150,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of rejecting a book request.
+     * If no request is selected from the table, a warning alert is shown.
+     * On success, the request status is updated to rejected, and the requests table is refreshed.
+     * If an error occurs while rejecting the request, an error alert is shown.
+     */
     @FXML
     private void handleRejectRequest() {
         BookRequest selectedRequest = requestsTable.getSelectionModel().getSelectedItem();
@@ -950,6 +1177,12 @@ public class MainController {
             showAlert("Error", "Failed to reject request: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
+
+/**
+ * Refreshes the requests table by retrieving all pending book requests from the student service
+ * and updating the table with the retrieved data. If an error occurs during retrieval, an error
+ * alert is displayed.
+ */
 
     private void refreshRequestsTable() {
         try {
