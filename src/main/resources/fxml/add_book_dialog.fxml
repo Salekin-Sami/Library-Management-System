@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
+<?import java.net.URL?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -63,6 +64,6 @@
     </HBox>
     
     <stylesheets>
-        <URL value="@../css/styles.css"/>
+        <URL value="@../css/dialogs.css"/>
     </stylesheets>
 </VBox> 

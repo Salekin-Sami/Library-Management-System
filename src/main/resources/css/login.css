@@ -1,0 +1,137 @@
+.root {
+    -fx-background-color: #CBF1F5;
+}
+
+.vbox {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 0);
+    -fx-padding: 40;
+    -fx-spacing: 20;
+}
+
+.label {
+    -fx-text-fill: #333333;
+}
+
+.label#titleLabel {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #71C9CE;
+}
+
+.label#subtitleLabel {
+    -fx-font-size: 20px;
+    -fx-text-fill: #A6E3E9;
+}
+
+.text-field,
+.password-field,
+.combo-box {
+    -fx-background-color: #F5F5F5;
+    -fx-background-radius: 5;
+    -fx-border-color: #A6E3E9;
+    -fx-border-radius: 5;
+    -fx-padding: 8;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused,
+.password-field:focused,
+.combo-box:focused {
+    -fx-border-color: #71C9CE;
+    -fx-border-width: 2;
+}
+
+.button {
+    -fx-background-color: #71C9CE;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #A6E3E9;
+}
+
+.button:pressed {
+    -fx-background-color: #5AB8BD;
+}
+
+.check-box {
+    -fx-text-fill: #333333;
+}
+
+.check-box .box {
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #A6E3E9;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #71C9CE;
+    -fx-border-color: #71C9CE;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+#loadingOverlay {
+    -fx-background-color: rgba(113, 201, 206, 0.8);
+    -fx-background-radius: 10;
+}
+
+#loadingSpinner {
+    -fx-progress-color: white;
+}
+
+#loadingText {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+@keyframes fadeIn {
+    from {
+        -fx-opacity: 0;
+    }
+
+    to {
+        -fx-opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        -fx-translate-y: 20;
+        -fx-opacity: 0;
+    }
+
+    to {
+        -fx-translate-y: 0;
+        -fx-opacity: 1;
+    }
+}
+
+.vbox {
+    -fx-animation: fadeIn 0.5s ease-in;
+}
+
+.label#titleLabel {
+    -fx-animation: slideIn 0.5s ease-out;
+}
+
+.label#subtitleLabel {
+    -fx-animation: slideIn 0.5s ease-out 0.1s;
+}
+
+.grid-pane {
+    -fx-animation: slideIn 0.5s ease-out 0.2s;
+}
+
+.hbox {
+    -fx-animation: slideIn 0.5s ease-out 0.3s;
+}
