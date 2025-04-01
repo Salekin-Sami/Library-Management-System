@@ -15,228 +15,141 @@
 12. [Performance Optimization](#performance-optimization)
 13. [Security Measures](#security-measures)
 14. [Future Roadmap](#future-roadmap)
-
 ## Project Overview
 
-### Student Dashboard
-
-![[Pasted image 20250401205844.png]]
-### My Account
-
-![[Pasted image 20250401205928.png]]
-
-### Login Screen
-
-![[Pasted image 20250401210037.png]]
-
-### Admin Dashboard
-
-![[Pasted image 20250401210239.png]]
-
-### Add Book
-
-![[Pasted image 20250401210331.png]]
-### Book details
-![[Pasted image 20250401210455.png]]
-
 ### Formal Introduction
-The Library Management System is a comprehensive desktop application designed to streamline library operations. Built with modern Java technologies, it provides a robust, secure, and user-friendly interface for managing library resources, user accounts, and administrative functions. The system implements industry-standard practices for data management, security, and user experience.
 
-### ELI5 Introduction
-Imagine you have a huge library with thousands of books, and you need to keep track of:
+The **Library Management System** is a comprehensive desktop application designed to streamline library operations. Built with modern Java technologies, it provides a robust, secure, and user-friendly interface for managing library resources, user accounts, and administrative functions. The system implements industry-standard practices for data management, security, and user experience.
+
+### Introduction
+
+Imagine managing a large library with thousands of books while keeping track of:
+
 - Who borrowed which book
 - When books need to be returned
 - Where each book is located
 - Who can access what
-- How to make sure everything is organized
+- How to keep everything organized
 
-This system is like having a super-smart helper who:
-- Knows exactly where every book is
-- Remembers who borrowed what
-- Can find books quickly
-- Makes sure only the right people can access certain things
-- Helps librarians do their job more easily
+This system acts as an intelligent assistant that:
+
+- Locates books instantly
+- Tracks borrowing history
+- Ensures proper access control
+- Simplifies library management for librarians
+
+---
 
 ## System Architecture
 
 ### Formal Architecture
-The system follows a layered architecture pattern:
-1. **Presentation Layer**: JavaFX-based UI components
-2. **Business Logic Layer**: Service classes handling core operations
-3. **Data Access Layer**: Hibernate ORM for database operations
-4. **Security Layer**: Authentication and authorization services
-5. **Integration Layer**: External service communication
 
-### ELI5 Architecture
-Think of the system like a well-organized office building:
-- The ground floor (Presentation Layer) is where visitors come in - it's pretty and easy to use
-- The middle floors (Business Logic) are where the real work happens
-- The basement (Data Access) is where we store all our important papers
-- The security desk (Security Layer) makes sure only the right people get in
-- The mail room (Integration Layer) handles communication with the outside world
+The system follows a **layered architecture** pattern:
+
+1. **Presentation Layer**: JavaFX-based UI components.
+2. **Business Logic Layer**: Service classes handling core operations.
+3. **Data Access Layer**: Hibernate ORM for database operations.
+4. **Security Layer**: Authentication and authorization services.
+5. **Integration Layer**: External service communication.
+
+###
 
 ## Technology Stack
 
 ### Core Technologies
-1. **Java 17** (Think of it like a universal language)
-   - Imagine you're writing a letter that anyone in the world can read
-   - Java is like a special language that computers can understand
-   - It's like having a universal translator that works on any computer
-   - Just like how you can write the same letter in different places, Java programs work on different computers
-   - Key Features:
-     - Pattern matching for switch expressions
-     - Enhanced pseudo-random number generators
-     - Improved garbage collection
-     - Better performance optimizations
 
-2. **JavaFX 17.0.2** (Think of it like building with LEGO blocks)
-   - Imagine you're building a house with LEGO blocks
-   - JavaFX is like a big box of special LEGO pieces that help you build computer programs
-   - It gives you ready-made pieces (buttons, text boxes, windows) that you can snap together
-   - FXML is like having a picture of how to build something - it's a blueprint that tells the computer how to arrange all the pieces
-   - Just like how you can build different things with the same LEGO pieces, you can create many different types of programs with JavaFX
-   - The best part is that these pieces work together smoothly and look nice on the screen
-   - Key Features:
-     - Modern UI components
-     - CSS styling support
-     - Scene graph architecture
-     - Event-driven programming model
+#### **Java 17**
 
-3. **Maven** (Think of it like a smart shopping assistant)
-   - Imagine you're building a big LEGO set
-   - Maven is like having a helper who:
-     - Keeps track of all the pieces you need
-     - Makes sure you have the right pieces
-     - Helps you put everything together in the right order
-     - Checks if everything works correctly
-   - It's like having a recipe book that:
-     - Lists all the ingredients (dependencies) you need
-     - Tells you how to mix them (build process)
-     - Makes sure you don't forget anything
-   - The best part is that it does all this automatically, so you don't have to worry about missing pieces or wrong versions
-   - Key Features:
-     - Dependency management
-     - Build lifecycle management
-     - Project object model (POM)
-     - Plugin architecture
+- Universal programming language ensuring cross-platform compatibility.
+- Key Features:
+  - Pattern matching for switch expressions.
+  - Improved garbage collection and performance optimizations.
+
+#### **JavaFX 17.0.2**
+
+- Modern UI framework with customizable UI components.
+- Key Features:
+  - Scene graph architecture.
+  - CSS styling support.
+  - Event-driven programming model.
+
+#### **Maven**
+
+- Dependency management and build automation tool.
+- Key Features:
+  - Project Object Model (POM) structure.
+  - Plugin-based architecture.
+  - Automated dependency resolution.
 
 ### Database Layer
-1. **MySQL** (Think of it like a digital filing cabinet)
-   - Imagine you have a huge filing cabinet where you keep all your important papers
-   - MySQL is like a super-organized digital filing cabinet
-   - It keeps all your information in neat, organized folders
-   - Just like how you can quickly find a paper in a well-organized cabinet, MySQL helps you find information quickly
-   - It's like having a magical cabinet that can hold millions of papers and find any one of them instantly
-   - Key Features:
-     - ACID compliance
-     - Transaction support
-     - Index optimization
-     - Stored procedures
-     - Triggers
 
-2. **Hibernate 6.2.13** (Think of it like a magical translator)
-   - Imagine you're trying to talk to someone who speaks a different language
-   - Hibernate is like having a magical translator that:
-     - Helps Java (your program) talk to MySQL (the database)
-     - Automatically translates between Java objects and database tables
-     - Makes sure everything is saved correctly
-   - It's like having a helper who:
-     - Takes your Java objects and puts them in the right boxes in the database
-     - When you need something back, it finds the right box and gives it to you
-     - Keeps everything organized and neat
-   - The best part is that you don't need to learn the database's special language - Hibernate handles all the translation for you
-   - Key Features:
-     - Object-Relational Mapping (ORM)
-     - Query optimization
-     - Caching mechanisms
-     - Transaction management
-     - Lazy loading
+#### **MySQL**
+
+- High-performance relational database system.
+- Key Features:
+  - ACID compliance.
+  - Transaction support.
+  - Index optimization for fast queries.
+
+#### **Hibernate 6.2.13**
+
+- Object-Relational Mapping (ORM) framework for database interaction.
+- Key Features:
+  - Automatic SQL generation.
+  - Caching mechanisms.
+  - Lazy loading for performance efficiency.
 
 ### Security & Authentication
-1. **BCrypt** (Think of it like a secret code maker)
-   - Imagine you have a special way to write your secret messages
-   - BCrypt is like a magical code maker that:
-     - Takes your password and turns it into a secret code
-     - Makes it impossible for anyone to figure out your original password
-     - Keeps your passwords safe, like having a secret language only you understand
-   - It's like having a special lock that can't be picked
-   - Key Features:
-     - Adaptive cost factor
-     - Salt generation
-     - Protection against rainbow table attacks
-     - Industry-standard hashing
 
-2. **JavaMail API** (Think of it like a digital post office)
-   - Imagine you have a magical post office that can send messages instantly
-   - JavaMail is like having a digital post office that:
-     - Sends emails automatically
-     - Can tell you when important things happen
-     - Works with different types of email systems
-   - It's like having a helper who delivers messages to the right people at the right time
-   - Key Features:
-     - SMTP support
-     - IMAP support
-     - POP3 support
-     - MIME message handling
-     - Attachment support
+#### **BCrypt**
+
+- Secure password hashing algorithm.
+- Key Features:
+  - Adaptive cost factor.
+  - Protection against brute force attacks.
+
+#### **JavaMail API**
+
+- Facilitates email-based communication.
+- Key Features:
+  - SMTP, IMAP, and POP3 support.
+  - MIME message handling.
+  - Email attachment support.
+  for future implementation
 
 ### Testing Framework
-1. **JUnit 5** (Think of it like a quality checker)
-   - Imagine you're making sure all your toys work correctly
-   - JUnit is like having a checklist that:
-     - Makes sure each part of your program works
-     - Tests everything automatically
-     - Tells you if something is broken
-   - It's like having a helper who checks everything before you use it
-   - Key Features:
-     - Parameterized tests
-     - Test lifecycle hooks
-     - Assertion methods
-     - Test categories
-     - Dynamic tests
 
-2. **Mockito** (Think of it like a pretend friend)
-   - Imagine you're playing with toys but need someone to play with
-   - Mockito is like having pretend friends that:
-     - Act like real parts of your program
-     - Help you test things without needing the real thing
-     - Make testing easier and faster
-   - It's like having a helper who pretends to be other parts of your program
-   - Key Features:
-     - Mock creation
-     - Stubbing
-     - Verification
-     - Spy objects
-     - Argument matchers
+#### **JUnit 5**
+
+- Unit testing framework for Java applications.
+- Key Features:
+  - Parameterized tests.
+  - Test lifecycle hooks.
+  - Dynamic test generation.
+
+#### **Mockito**
+
+- Mocking framework for Java unit tests.
+- Key Features:
+  - Mock creation and stubbing.
+  - Verification of method calls.
 
 ### Additional Libraries
-1. **OkHttp** (Think of it like a digital messenger)
-   - Imagine you need to send messages to other computers
-   - OkHttp is like having a fast messenger that:
-     - Carries messages between computers
-     - Makes sure messages arrive safely
-     - Can handle different types of messages
-   - It's like having a reliable delivery service for your computer
-   - Key Features:
-     - Connection pooling
-     - GZIP compression
-     - Response caching
-     - Retry mechanism
-     - WebSocket support
 
-2. **JSON Libraries** (Think of it like a universal translator for data)
-   - Imagine you need to share information with different types of computers
-   - JSON libraries are like having translators that:
-     - Help computers understand each other
-     - Make information easy to share
-     - Work with different types of data
-   - It's like having a universal language that all computers can understand
-   - Key Features:
-     - Serialization/Deserialization
-     - Schema validation
-     - Pretty printing
-     - Tree model
-     - Streaming API
+#### **OkHttp**
+
+- HTTP client for network communication.
+- Key Features:
+  - Connection pooling.
+  - WebSocket support.
+  - Response caching.
+
+#### **JSON Libraries**
+
+- Enables serialization and deserialization of JSON data.
+- Key Features:
+  - Schema validation.
+  - Streaming API for large JSON data.
 
 ## Project Structure
 
@@ -420,31 +333,6 @@ INSERT INTO books (title, author, isbn, category, publisher, publicationYear, st
    - Each book can have multiple requests
    - Book requests are linked to book ID
 
-### Database Operations
-
-1. **User Management**
-   - User registration
-   - Profile creation
-   - Role assignment
-   - Password management
-
-2. **Book Management**
-   - Book addition
-   - Inventory updates
-   - Availability tracking
-   - Category management
-
-3. **Transaction Management**
-   - Request processing
-   - Status updates
-   - Due date tracking
-   - Return handling
-
-4. **Security Operations**
-   - Password hashing
-   - Session management
-   - Role verification
-   - Access control
 
 ### Database-Java Interaction
 
@@ -914,241 +802,6 @@ FOREIGN KEY (book_id) REFERENCES books(id);
 - Prevents orphaned records
 - Maintains referential integrity
 
-### Database Maintenance
-
-#### 1. Regular Tasks
-- Daily backup of database
-- Weekly index optimization
-- Monthly data cleanup
-- Quarterly performance review
-
-#### 2. Monitoring
-- Track query performance
-- Monitor table sizes
-- Check index usage
-- Review transaction patterns
-
-### Data Security
-
-#### 1. Access Control
-- Role-based permissions
-- Encrypted connections
-- Secure password storage
-- Audit logging
-
-#### 2. Data Protection
-- Regular backups
-- Transaction logging
-- Error handling
-- Data validation
-
-## User Interface
-
-### Design Principles
-1. **Usability**
-   - Intuitive navigation
-   - Clear feedback
-   - Consistent layout
-   - Responsive design
-
-2. **Accessibility**
-   - Screen reader support
-   - Keyboard navigation
-   - High contrast options
-   - Font size adjustment
-
-3. **Performance**
-   - Lazy loading
-   - Efficient updates
-   - Smooth transitions
-   - Resource optimization
-
-### Key Screens
-1. **Main Dashboard**
-   - Quick statistics
-   - Recent activities
-   - Quick actions
-   - System status
-
-2. **Book Management**
-   - Search interface
-   - Book details
-   - Status indicators
-   - Action buttons
-
-3. **User Interface**
-   - Profile view
-   - Settings panel
-   - Activity history
-   - Notifications
-
-## Security Implementation
-
-### Authentication System
-1. **Password Security**
-   - BCrypt hashing
-   - Salt generation
-   - Password policies
-   - Brute force protection
-
-2. **Session Management**
-   - Token-based authentication
-   - Session timeout
-   - Concurrent session handling
-   - Secure cookie management
-
-### Authorization System
-1. **Role-Based Access Control**
-   - User roles
-   - Permission levels
-   - Access restrictions
-   - Audit logging
-
-2. **Data Protection**
-   - Input validation
-   - SQL injection prevention
-   - XSS protection
-   - CSRF protection
-
-## Testing Strategy
-
-### Test Types
-1. **Unit Tests**
-   - Component testing
-   - Service testing
-   - Utility testing
-   - Mock usage
-
-2. **Integration Tests**
-   - Database integration
-   - Service integration
-   - API integration
-   - End-to-end testing
-
-### Test Coverage
-1. **Code Coverage**
-   - Line coverage
-   - Branch coverage
-   - Method coverage
-   - Class coverage
-
-2. **Test Categories**
-   - Happy path testing
-   - Edge case testing
-   - Error handling
-   - Performance testing
-
-## Build and Deployment
-
-### Build Process
-1. **Compilation**
-   - Source compilation
-   - Resource processing
-   - Dependency resolution
-   - Asset bundling
-
-2. **Testing**
-   - Unit test execution
-   - Integration testing
-   - Code coverage reporting
-   - Quality checks
-
-### Deployment Process
-1. **Packaging**
-   - JAR creation
-   - Dependency bundling
-   - Resource packaging
-   - Configuration management
-
-2. **Distribution**
-   - Version control
-   - Release management
-   - Installation scripts
-   - Update mechanism
-
-## Development Workflow
-
-### Version Control
-1. **Git Workflow**
-   - Feature branches
-   - Pull requests
-   - Code review
-   - Merge strategy
-
-2. **Release Management**
-   - Version numbering
-   - Changelog maintenance
-   - Release notes
-   - Deployment checklist
-
-### Code Quality
-1. **Standards**
-   - Coding conventions
-   - Documentation
-   - Code review
-   - Style guide
-
-2. **Tools**
-   - Static analysis
-   - Code formatting
-   - Dependency checking
-   - Security scanning
-
-## Performance Optimization
-
-### Database Optimization
-1. **Query Optimization**
-   - Index usage
-   - Query caching
-   - Connection pooling
-   - Batch processing
-
-2. **Resource Management**
-   - Memory usage
-   - Connection handling
-   - Cache management
-   - Resource cleanup
-
-### Application Optimization
-1. **UI Performance**
-   - Component lazy loading
-   - Event handling
-   - Resource management
-   - State management
-
-2. **Memory Management**
-   - Object lifecycle
-   - Garbage collection
-   - Resource pooling
-   - Memory monitoring
-
-## Security Measures
-
-### Application Security
-1. **Authentication**
-   - Password policies
-   - Session management
-   - Token handling
-   - Access control
-
-2. **Data Security**
-   - Encryption
-   - Secure storage
-   - Data validation
-   - Audit logging
-
-### System Security
-1. **Infrastructure**
-   - Network security
-   - Firewall rules
-   - Access control
-   - Monitoring
-
-2. **Compliance**
-   - Data protection
-   - Privacy rules
-   - Security standards
-   - Audit requirements
 
 ## Future Roadmap
 
@@ -1156,27 +809,7 @@ FOREIGN KEY (book_id) REFERENCES books(id);
 1. **User Experience**
    - Mobile app
    - Web interface
-   - Offline support
    - Enhanced search
-
-2. **System Enhancement**
-   - Cloud integration
-   - Analytics dashboard
-   - API expansion
-   - Performance improvements
-
-### Technical Debt
-1. **Code Quality**
-   - Refactoring
-   - Documentation
-   - Test coverage
-   - Dependency updates
-
-2. **Infrastructure**
-   - Scalability
-   - Monitoring
-   - Backup systems
-   - Disaster recovery
 
 ## Conclusion
 This technical documentation provides a comprehensive overview of the Library Management System. The system is built with modern technologies and follows best practices in software development. Regular updates and maintenance will ensure the system remains secure, efficient, and user-friendly. 
