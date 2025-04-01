@@ -18,6 +18,27 @@
 
 ## Project Overview
 
+### Student Dashboard
+
+![[Pasted image 20250401205844.png]]
+### My Account
+
+![[Pasted image 20250401205928.png]]
+
+### Login Screen
+
+![[Pasted image 20250401210037.png]]
+
+### Admin Dashboard
+
+![[Pasted image 20250401210239.png]]
+
+### Add Book
+
+![[Pasted image 20250401210331.png]]
+### Book details
+![[Pasted image 20250401210455.png]]
+
 ### Formal Introduction
 The Library Management System is a comprehensive desktop application designed to streamline library operations. Built with modern Java technologies, it provides a robust, secure, and user-friendly interface for managing library resources, user accounts, and administrative functions. The system implements industry-standard practices for data management, security, and user experience.
 
@@ -62,7 +83,6 @@ Think of the system like a well-organized office building:
    - Java is like a special language that computers can understand
    - It's like having a universal translator that works on any computer
    - Just like how you can write the same letter in different places, Java programs work on different computers
-   - The number 17 is like the version of the language - it's the newest and best version
    - Key Features:
      - Pattern matching for switch expressions
      - Enhanced pseudo-random number generators

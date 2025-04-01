@@ -1,3 +1,46 @@
+/**
+ * Represents a borrowing record in the library system.
+ * This entity tracks the details of a book borrowing transaction,
+ * including the student who borrowed the book, the book copy borrowed,
+ * and the associated dates and fines.
+ * 
+ * <p>Annotations:</p>
+ * <ul>
+ *   <li>@Entity - Marks this class as a JPA entity.</li>
+ *   <li>@Table(name = "borrowings") - Maps this entity to the "borrowings" table in the database.</li>
+ * </ul>
+ * 
+ * <p>Fields:</p>
+ * <ul>
+ *   <li>id - The unique identifier for the borrowing record.</li>
+ *   <li>student - The student who borrowed the book (Many-to-One relationship).</li>
+ *   <li>bookCopy - The specific copy of the book borrowed (Many-to-One relationship).</li>
+ *   <li>borrowDate - The date when the book was borrowed.</li>
+ *   <li>dueDate - The date by which the book should be returned.</li>
+ *   <li>returnDate - The date when the book was actually returned.</li>
+ *   <li>fineAmount - The fine amount calculated for overdue returns.</li>
+ *   <li>finePaid - Indicates whether the fine has been paid.</li>
+ *   <li>createdAt - The timestamp when the borrowing record was created.</li>
+ *   <li>updatedAt - The timestamp when the borrowing record was last updated.</li>
+ * </ul>
+ * 
+ * <p>Transient Methods:</p>
+ * <ul>
+ *   <li>isOverdue() - Checks if the borrowing is overdue based on the due date and return date.</li>
+ *   <li>getDaysOverdue() - Calculates the number of days the borrowing is overdue.</li>
+ *   <li>calculateFine() - Calculates the fine amount for overdue borrowing (10 taka per day).</li>
+ * </ul>
+ * 
+ * <p>Constructor:</p>
+ * <ul>
+ *   <li>Borrowing() - Initializes default values for borrowDate, finePaid, createdAt, and updatedAt.</li>
+ * </ul>
+ * 
+ * <p>Overrides:</p>
+ * <ul>
+ *   <li>toString() - Provides a string representation of the borrowing record.</li>
+ * </ul>
+ */
 package com.library.model;
 
 import jakarta.persistence.*;

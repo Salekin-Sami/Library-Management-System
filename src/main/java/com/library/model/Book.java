@@ -5,6 +5,66 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+
+/**
+ * Represents a book entity in the library system.
+ * This class is mapped to the "books" table in the database.
+ * It contains details about a book, including its title, author, ISBN, publisher, 
+ * edition, publication year, category, cover image URL, rating, and description.
+ * It also tracks the creation and update timestamps and maintains a list of book copies.
+ * 
+ * <p>Annotations:
+ * <ul>
+ *   <li>@Entity - Marks this class as a JPA entity.</li>
+ *   <li>@Table(name = "books") - Specifies the table name in the database.</li>
+ *   <li>@Id - Marks the primary key field.</li>
+ *   <li>@GeneratedValue(strategy = GenerationType.IDENTITY) - Specifies the primary key generation strategy.</li>
+ *   <li>@Column - Maps fields to database columns with additional constraints.</li>
+ *   <li>@OneToMany - Defines a one-to-many relationship with the BookCopy entity.</li>
+ *   <li>@Transient - Marks methods that are not persisted in the database.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>Key Features:
+ * <ul>
+ *   <li>Tracks book details such as title, author, ISBN, and publisher.</li>
+ *   <li>Maintains a list of book copies and provides methods to get total and available copies.</li>
+ *   <li>Automatically updates the "updatedAt" field whenever a setter method is called.</li>
+ *   <li>Provides utility methods to check availability and retrieve available copies.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>Fields:
+ * <ul>
+ *   <li>id - Unique identifier for the book.</li>
+ *   <li>title - Title of the book (required).</li>
+ *   <li>author - Author of the book (required).</li>
+ *   <li>isbn - ISBN of the book (unique).</li>
+ *   <li>publisher - Publisher of the book (required).</li>
+ *   <li>edition - Edition of the book.</li>
+ *   <li>publicationYear - Year the book was published.</li>
+ *   <li>category - Category of the book (required).</li>
+ *   <li>coverImageUrl - URL of the book's cover image.</li>
+ *   <li>rating - Average rating of the book.</li>
+ *   <li>description - Description of the book (stored as TEXT in the database).</li>
+ *   <li>createdAt - Timestamp when the book was created.</li>
+ *   <li>updatedAt - Timestamp when the book was last updated.</li>
+ *   <li>copies - List of book copies associated with this book.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>Methods:
+ * <ul>
+ *   <li>Getters and setters for all fields.</li>
+ *   <li>getTotalCopies() - Returns the total number of copies.</li>
+ *   <li>getAvailableCopies() - Returns a list of available copies.</li>
+ *   <li>isAvailable() - Checks if there are any available copies.</li>
+ *   <li>toString() - Provides a string representation of the book.</li>
+ * </ul>
+ * </p>
+ */
 @Entity
 @Table(name = "books")
 public class Book {

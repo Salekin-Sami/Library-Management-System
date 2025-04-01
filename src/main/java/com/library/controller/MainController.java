@@ -1221,6 +1221,13 @@ public class MainController {
         borrowingsTable.setItems(FXCollections.observableArrayList(borrowingService.getAllBorrowings()));
     }
 
+    /**
+     * Opens a dialog to display the details of a book.
+     * If no book is passed in, the dialog is not opened.
+     * If an exception occurs while loading the dialog, an error alert is shown.
+     * After the dialog is closed, the books table is refreshed.
+     * @param book the book whose details to show
+     */
     private void showBookDetails(Book book) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/book_details_dialog.fxml"));
@@ -1241,6 +1248,13 @@ public class MainController {
         }
     }
 
+    /**
+     * Opens a dialog to display the details of a student.
+     * If no student is passed in, the dialog is not opened.
+     * If an exception occurs while loading the dialog, an error alert is shown.
+     * After the dialog is closed, the students table and borrowings table are refreshed.
+     * @param student the student whose details to show
+     */
     private void showStudentDetails(Student student) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -1267,6 +1281,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the action of searching for students by name, student ID, or email.
+     * If the search text is empty, all students are retrieved.
+     * On success, the students table is refreshed with the search results.
+     * If an error occurs while searching, an error alert is shown.
+     */
     @FXML
     private void handleSearchStudents() {
         String searchText = studentSearchField.getText().trim();
