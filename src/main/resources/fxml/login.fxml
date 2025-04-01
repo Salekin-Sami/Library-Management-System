@@ -29,7 +29,6 @@
         <HBox spacing="10" alignment="CENTER_LEFT">
             <CheckBox fx:id="rememberMeCheckbox" text="Remember Me"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Forgot Password?" onAction="#handleForgotPassword"/>
         </HBox>
 
         <HBox spacing="10" alignment="CENTER">

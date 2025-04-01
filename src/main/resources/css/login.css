@@ -1,39 +1,43 @@
 .root {
-    -fx-background-color: #CBF1F5;
+    -fx-background-color: linear-gradient(to bottom right, #CBF1F5, #A6E3E9);
 }
 
 .vbox {
     -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 0);
-    -fx-padding: 40;
-    -fx-spacing: 20;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 15, 0, 0, 0);
+    -fx-padding: 50;
+    -fx-spacing: 25;
+    -fx-min-width: 400;
 }
 
 .label {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #2C3E50;
 }
 
 .label#titleLabel {
-    -fx-font-size: 28px;
+    -fx-font-size: 32px;
     -fx-font-weight: bold;
     -fx-text-fill: #71C9CE;
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.3), 5, 0, 0, 0);
 }
 
 .label#subtitleLabel {
-    -fx-font-size: 20px;
-    -fx-text-fill: #A6E3E9;
+    -fx-font-size: 22px;
+    -fx-text-fill: #2C3E50;
+    -fx-font-weight: normal;
 }
 
 .text-field,
 .password-field,
 .combo-box {
-    -fx-background-color: #F5F5F5;
-    -fx-background-radius: 5;
-    -fx-border-color: #A6E3E9;
-    -fx-border-radius: 5;
-    -fx-padding: 8;
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 8;
+    -fx-border-color: #E9ECEF;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
     -fx-font-size: 14px;
+    -fx-min-width: 250;
 }
 
 .text-field:focused,
@@ -41,33 +45,41 @@
 .combo-box:focused {
     -fx-border-color: #71C9CE;
     -fx-border-width: 2;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.2), 5, 0, 0, 0);
 }
 
 .button {
     -fx-background-color: #71C9CE;
     -fx-text-fill: white;
     -fx-font-size: 14px;
-    -fx-padding: 10 20;
-    -fx-background-radius: 5;
+    -fx-font-weight: bold;
+    -fx-padding: 12 30;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.3), 5, 0, 0, 0);
 }
 
 .button:hover {
     -fx-background-color: #A6E3E9;
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.4), 8, 0, 0, 0);
 }
 
 .button:pressed {
     -fx-background-color: #5AB8BD;
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.2), 3, 0, 0, 0);
 }
 
 .check-box {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 14px;
 }
 
 .check-box .box {
-    -fx-background-color: #F5F5F5;
-    -fx-border-color: #A6E3E9;
-    -fx-border-radius: 3;
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #E9ECEF;
+    -fx-border-radius: 4;
+    -fx-padding: 2;
 }
 
 .check-box:selected .box {
@@ -80,18 +92,22 @@
 }
 
 #loadingOverlay {
-    -fx-background-color: rgba(113, 201, 206, 0.8);
-    -fx-background-radius: 10;
+    -fx-background-color: rgba(113, 201, 206, 0.9);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 0);
 }
 
 #loadingSpinner {
     -fx-progress-color: white;
+    -fx-pref-width: 60;
+    -fx-pref-height: 60;
 }
 
 #loadingText {
     -fx-text-fill: white;
-    -fx-font-size: 16px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 2, 0, 0, 0);
 }
 
 @keyframes fadeIn {
@@ -106,7 +122,7 @@
 
 @keyframes slideIn {
     from {
-        -fx-translate-y: 20;
+        -fx-translate-y: 30;
         -fx-opacity: 0;
     }
 
@@ -117,21 +133,21 @@
 }
 
 .vbox {
-    -fx-animation: fadeIn 0.5s ease-in;
+    -fx-animation: fadeIn 0.6s ease-in;
 }
 
 .label#titleLabel {
-    -fx-animation: slideIn 0.5s ease-out;
+    -fx-animation: slideIn 0.6s ease-out;
 }
 
 .label#subtitleLabel {
-    -fx-animation: slideIn 0.5s ease-out 0.1s;
+    -fx-animation: slideIn 0.6s ease-out 0.1s;
 }
 
 .grid-pane {
-    -fx-animation: slideIn 0.5s ease-out 0.2s;
+    -fx-animation: slideIn 0.6s ease-out 0.2s;
 }
 
 .hbox {
-    -fx-animation: slideIn 0.5s ease-out 0.3s;
+    -fx-animation: slideIn 0.6s ease-out 0.3s;
 }
