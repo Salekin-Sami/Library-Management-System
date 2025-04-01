@@ -19,8 +19,8 @@
 ## Project Overview
 
 ### Student Dashboard
-
-![[Pasted image 20250401205844.png]]
+![
+!\[\[Pasted image 20250401205844.png\]\]](<Pasted image 20250401205844.png>)
 ### My Account
 
 ![[Pasted image 20250401205928.png]]
