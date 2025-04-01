@@ -409,13 +409,20 @@ public class MainController {
             prefs.remove("password");
             prefs.putBoolean("remember", false);
 
+            // Get the current stage
+            Stage currentStage = (Stage) root.getScene().getWindow();
+
             // Load login view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) root.getScene().getWindow();
-            stage.setTitle("Login - Library Management System");
-            stage.setScene(new Scene(root));
-            stage.show();
+            Parent loginRoot = loader.load();
+
+            // Create new scene with the login view
+            Scene loginScene = new Scene(loginRoot);
+
+            // Set the scene to the current stage
+            currentStage.setScene(loginScene);
+            currentStage.setTitle("Login - Library Management System");
+            currentStage.show();
         } catch (Exception e) {
             showAlert("Error", "Failed to logout: " + e.getMessage(), Alert.AlertType.ERROR);
         }
