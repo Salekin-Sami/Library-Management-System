@@ -184,7 +184,7 @@
 }
 
 .tab:selected {
-    -fx-background-color: #00ADB5;
+    -fx-background-color: #00ADB5 !important;
     -fx-border-color: #00ADB5;
     -fx-effect: dropshadow(three-pass-box, rgba(38, 70, 83, 0.2), 8, 0, 0, 0);
 }
