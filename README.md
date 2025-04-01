@@ -79,6 +79,17 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - Maven 3.6 or later
 - MySQL 8.0 or later
 
+## Project GUI
+![image](https://github.com/user-attachments/assets/4007d0fc-9e67-4e52-8456-168fa5ba268d)
+![image](https://github.com/user-attachments/assets/06f31c3e-0e8d-4585-be2c-6748f78c7aa1)
+![image](https://github.com/user-attachments/assets/fec5f169-a86e-4a81-920f-080971b20ceb)
+![image](https://github.com/user-attachments/assets/21fb7cdf-392f-43fd-89e1-de7b46e12655)
+![image](https://github.com/user-attachments/assets/a63c6616-7c33-47cf-936a-10f58a89caf1)
+![image](https://github.com/user-attachments/assets/37672fce-39a5-4c2d-aeff-499678eec05e)
+![image](https://github.com/user-attachments/assets/ce4e3f32-60e1-4394-a9f0-e8612f096e05)
+![image](https://github.com/user-attachments/assets/dc0f5561-1047-43d5-b216-e13e40d56511)
+
+
 ## Setup
 
 1. Clone the repository:
