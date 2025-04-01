@@ -119,6 +119,17 @@ public class MainController {
     @FXML
     private Label dateLabel;
 
+    @FXML
+    private Label totalBooksLabel;
+    @FXML
+    private Label totalStudentsLabel;
+    @FXML
+    private Label currentBorrowingsLabel;
+    @FXML
+    private Label overdueBooksLabel;
+    @FXML
+    private Label totalFinesLabel;
+
     public MainController() {
         this.bookService = new BookService();
         this.studentService = new StudentService();
@@ -314,6 +325,7 @@ public class MainController {
             loadBorrowings();
             loadRecentActivities();
             refreshRequestsTable();
+            updateStatistics();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to load initial data: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -352,6 +364,39 @@ public class MainController {
 
     private void loadRecentActivities() {
         // TODO: Implement recent activities loading
+    }
+
+    private void updateStatistics() {
+        try {
+            // Update total books
+            long totalBooks = bookService.getAllBooks().size();
+            totalBooksLabel.setText(String.valueOf(totalBooks));
+
+            // Update total students
+            long totalStudents = studentService.getAllStudents().size();
+            totalStudentsLabel.setText(String.valueOf(totalStudents));
+
+            // Update current borrowings
+            long currentBorrowings = borrowingService.getAllBorrowings().stream()
+                    .filter(b -> b.getReturnDate() == null)
+                    .count();
+            currentBorrowingsLabel.setText(String.valueOf(currentBorrowings));
+
+            // Update overdue books
+            long overdueBooks = borrowingService.getAllBorrowings().stream()
+                    .filter(b -> b.getReturnDate() == null && b.getDueDate().isBefore(LocalDate.now()))
+                    .count();
+            overdueBooksLabel.setText(String.valueOf(overdueBooks));
+
+            // Update total unpaid fines
+            double totalUnpaidFines = borrowingService.getAllBorrowings().stream()
+                    .mapToDouble(b -> b.calculateFine())
+                    .sum();
+            totalFinesLabel.setText(String.format("$%.2f", totalUnpaidFines));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to update statistics: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     // Menu Item Handlers

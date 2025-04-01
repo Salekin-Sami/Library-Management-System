@@ -3,37 +3,46 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.library.controller.AddBookDialogController"
-      style="-fx-background-color: white; -fx-background-radius: 10;">
+      style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
     
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
     
-    <spacing>10</spacing>
+    <spacing>15</spacing>
     
-    <Label text="Search for a book:" style="-fx-font-weight: bold;"/>
+    <!-- Header Section -->
+    <VBox spacing="5">
+        <Label text="Add New Book" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <Label text="Search for a book to add to the library" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
+    </VBox>
     
-    <HBox spacing="10" alignment="CENTER_LEFT">
+    <!-- Search Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f8f9fa; -fx-background-radius: 25; -fx-padding: 5;">
         <TextField fx:id="searchField" promptText="Enter book title, author, or ISBN..." 
-                  style="-fx-background-radius: 20; -fx-padding: 8;" HBox.hgrow="ALWAYS"/>
+                  style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 8 15; -fx-font-size: 14;" 
+                  HBox.hgrow="ALWAYS"/>
         <Button text="Search" onAction="#handleSearch" 
-                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 15;"/>
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-font-weight: bold; -fx-font-size: 14;"/>
     </HBox>
     
-    <ProgressIndicator fx:id="progressIndicator" visible="false" VBox.vgrow="ALWAYS"/>
+    <!-- Progress Indicator -->
+    <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+        <ProgressIndicator fx:id="progressIndicator" visible="false" style="-fx-progress-color: #3498db;"/>
+    </VBox>
     
+    <!-- Results Table -->
     <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
         <style>
             -fx-background-color: transparent;
-            -fx-table-cell-border-color: transparent;
+            -fx-table-cell-border-color: #e0e0e0;
+            -fx-table-header-border-color: #3498db;
         </style>
-        <styleClass>
-            <java.lang.String fx:value="table-view"/>
-        </styleClass>
         <columns>
             <TableColumn fx:id="titleColumn" text="Title" prefWidth="300" minWidth="200"/>
             <TableColumn fx:id="authorColumn" text="Author" prefWidth="200" minWidth="150"/>
@@ -46,13 +55,14 @@
         </columnResizePolicy>
     </TableView>
 
+    <!-- Action Buttons -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button fx:id="addBookButton" text="Add Selected Book" onAction="#handleAddSelectedBook" 
-                style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 15;"
+                style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-font-weight: bold; -fx-font-size: 14;"
                 visible="false"/>
     </HBox>
     
     <stylesheets>
-        <java.net.URL value="@../styles/styles.css"/>
+        <URL value="@../css/styles.css"/>
     </stylesheets>
 </VBox> 
