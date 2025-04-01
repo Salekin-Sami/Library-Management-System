@@ -80,7 +80,6 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - MySQL 8.0 or later
 
 ## Project GUI
-![image](https://github.com/user-attachments/assets/4007d0fc-9e67-4e52-8456-168fa5ba268d)
 ![image](https://github.com/user-attachments/assets/06f31c3e-0e8d-4585-be2c-6748f78c7aa1)
 ![image](https://github.com/user-attachments/assets/fec5f169-a86e-4a81-920f-080971b20ceb)
 ![image](https://github.com/user-attachments/assets/21fb7cdf-392f-43fd-89e1-de7b46e12655)
