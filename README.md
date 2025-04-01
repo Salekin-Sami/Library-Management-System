@@ -4,22 +4,66 @@ A JavaFX-based library management system that helps librarians manage books, stu
 
 ## Features
 
-- Book Management
-  - Add, edit, and delete books
-  - Track multiple copies of books
-  - Search books by title, author, or ISBN
-  - View book details and borrowing history
+### Book Management
+- Add, edit, and delete books
+- Track multiple copies of books with individual status tracking
+- Search books by title, author, or ISBN
+- View detailed book information including:
+  - Cover image
+  - Publication details
+  - Edition information
+  - Rating system
+  - Description
+  - Copy locations and status
+  - Borrowing history
+- Add new copies to existing books
+- Track book availability status
 
-- Student Management
-  - Add, edit, and delete students
-  - View student details and borrowing history
-  - Track student fines and payments
+### Student Management
+- Add, edit, and delete students
+- View student details and borrowing history
+- Track student fines and payments
+- Student profile management
+- Student dashboard with personalized view
+- View student borrowing history with detailed information
 
-- Borrowing Management
-  - Issue books to students
-  - Return books with fine calculation
-  - Track overdue books
-  - View active borrowings and history
+### Borrowing Management
+- Issue books to students
+- Return books with automatic fine calculation
+- Track overdue books
+- View active borrowings and history
+- Automatic fine calculation for overdue books
+- Book request system for students
+- Track borrowing status and history
+
+### User Interface
+- Modern and intuitive JavaFX interface
+- Dark/Light theme support
+- Responsive design
+- Search functionality across all modules
+- Detailed views for books and students
+- Statistics dashboard showing:
+  - Total books
+  - Total students
+  - Current borrowings
+  - Overdue books
+  - Total unpaid fines
+
+### User Roles
+- Administrator (Librarian) access with full system control
+- Student access with limited functionality
+- Secure login system
+- Remember me functionality
+- Role-based access control
+
+### Additional Features
+- Book request system
+- Fine management system
+- Statistics and reporting
+- User guide and help system
+- About section with system information
+- Confirmation dialogs for important actions
+- Error handling and user notifications
 
 ## Technologies Used
 
