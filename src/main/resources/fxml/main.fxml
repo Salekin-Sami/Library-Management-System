@@ -4,6 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
       fx:controller="com.library.controller.MainController"
@@ -125,6 +127,19 @@
             <VBox spacing="10">
                 <HBox spacing="10" alignment="CENTER">
                     <TextField fx:id="borrowingSearchField" HBox.hgrow="ALWAYS" promptText="Search borrowings..."/>
+                    <ComboBox fx:id="borrowingFilter">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="All"/>
+                                <String fx:value="Borrowed"/>
+                                <String fx:value="Overdue"/>
+                                <String fx:value="Returned"/>
+                            </FXCollections>
+                        </items>
+                        <value>
+                            <String fx:value="All"/>
+                        </value>
+                    </ComboBox>
                     <Button text="Search" onAction="#handleSearchBorrowings"/>
                     <Button fx:id="returnBookButton" text="Return Book" onAction="#handleReturnBook"/>
                 </HBox>
@@ -194,4 +209,4 @@
         <Text fx:id="statusText" styleClass="status-text"/>
     </HBox>
 
-</VBox> 
+</VBox>
