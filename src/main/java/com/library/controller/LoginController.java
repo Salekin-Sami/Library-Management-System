@@ -104,6 +104,9 @@ public class LoginController {
         prefs.put(KEY_EMAIL_HISTORY, historyString);
     }
 
+    /**
+     * Set up the email field autocomplete.
+     */
     private void setupEmailAutocomplete() {
         emailField.setOnKeyPressed(this::handleEmailKeyPress);
 
@@ -128,6 +131,7 @@ public class LoginController {
                 String input = newValue.toLowerCase();
                 List<String> suggestions = new ArrayList<>();
 
+                // Find emails that start with the user's input
                 for (String email : emailHistory) {
                     if (email.toLowerCase().startsWith(input)) {
                         suggestions.add(email);
@@ -166,12 +170,20 @@ public class LoginController {
         }
     }
 
+    /**
+     * Shows the email suggestions list popup below the email field with the
+     * given list of suggestions. If the popup is already showing, it will be
+     * updated with the new suggestions. The popup is only shown if the scene is
+     * available.
+     * 
+     * @param suggestions The list of email suggestions to show
+     */
     private void showEmailSuggestions(List<String> suggestions) {
         if (suggestionsPopup == null) {
             suggestionsPopup = new Popup();
             suggestionsListView = new ListView<>();
             suggestionsListView.setPrefWidth(emailField.getWidth());
-            suggestionsListView.setMaxHeight(150);
+            suggestionsListView.setMaxHeight(50);
             suggestionsListView.setStyle(
                     "-fx-background-color: white;" +
                             "-fx-border-color: #E9ECEF;" +
@@ -328,7 +340,7 @@ public class LoginController {
 
     private void hideLoadingOverlay() {
         // Fade out animation
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), loadingOverlay);
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(500), loadingOverlay);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
         fadeOut.setOnFinished(e -> {
@@ -338,6 +350,22 @@ public class LoginController {
         fadeOut.play();
     }
 
+    /**
+     * Handles the login button click event.
+     * <p>
+     * First, it checks if the email and password fields are empty. If either is empty,
+     * it shows an error alert and returns.
+     * <p>
+     * Then, it adds the email to the email history on a successful login.
+     * <p>
+     * After that, it shows a loading overlay and simulates a network delay (1 second).
+     * <p>
+     * Finally, it attempts to log in the user using the provided credentials.
+     * If the login is successful, it saves the credentials if the remember me checkbox
+     * is checked, and loads the appropriate dashboard based on the role. If the login
+     * fails, it shows an error alert.
+     * @param event The login button click event.
+     */
     @FXML
     private void handleLogin() {
         String email = emailField.getText().trim();
@@ -422,7 +450,7 @@ public class LoginController {
             }
         }).start();
     }
-
+    //  We are not using this currently
     @FXML
     private void handleRegister() {
         try {

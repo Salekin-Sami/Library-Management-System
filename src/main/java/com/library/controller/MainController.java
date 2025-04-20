@@ -371,7 +371,7 @@ public class MainController {
             fineColumn.setCellValueFactory(cellData -> {
                 double fineAmount = cellData.getValue().calculateFine();
                 return new SimpleStringProperty(fineAmount > 0
-                        ? String.format("$%.2f%s", fineAmount, cellData.getValue().isFinePaid() ? " (Paid)" : "")
+                        ? String.format("৳%.2f%s", fineAmount, cellData.getValue().isFinePaid() ? " (Paid)" : "")
                         : "");
             });
             borrowingsTable.getColumns().add(fineColumn);
@@ -522,7 +522,7 @@ public class MainController {
             double totalUnpaidFines = borrowingService.getAllBorrowings().stream()
                     .mapToDouble(b -> b.calculateFine())
                     .sum();
-            totalFinesLabel.setText(String.format("$%.2f", totalUnpaidFines));
+            totalFinesLabel.setText(String.format("৳%.2f", totalUnpaidFines));
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to update statistics: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -710,7 +710,7 @@ public class MainController {
 
             if (fineAmount > 0) {
                 confirmDialog.setContentText(String.format(
-                        "This book is overdue. Fine amount: $%.2f\nDo you want to proceed with the return?",
+                        "This book is overdue. Fine amount: ৳%.2f\nDo you want to proceed with the return?",
                         fineAmount));
             } else {
                 confirmDialog.setContentText("Are you sure you want to return this book?");

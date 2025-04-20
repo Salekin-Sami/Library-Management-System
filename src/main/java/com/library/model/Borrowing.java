@@ -184,13 +184,18 @@ public class Borrowing {
         return (int) (LocalDate.now().toEpochDay() - dueDate.toEpochDay());
     }
 
+    /**
+     * Calculates the fine amount for overdue borrowing.
+     * If the borrowing is not overdue, the fine amount is 0.
+     * The fine amount is calculated as 5 taka per day overdue.
+     * @return the fine amount
+     */
     @Transient
     public double calculateFine() {
         if (!isOverdue()) {
             return 0.0;
         }
-        // Assuming fine is 10 taka per day
-        return getDaysOverdue() * 10.0;
+        return getDaysOverdue() * 5.0;
     }
 
     @Override

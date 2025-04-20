@@ -6,37 +6,73 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.*?>
 
+<!--
+The main layout for the student dashboard. It contains a tabbed pane with two tabs: "Search Books" and "My Requests".
+-->
+
 <VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml" 
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.library.controller.StudentDashboardController"
       stylesheets="@../css/student_dashboard.css">
     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
 
+    <!--
+    The header section of the dashboard. It contains the welcome message, the profile button, and the logout button.
+    -->
     <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+        <!--
+        The welcome message. It displays the student name.
+        -->
         <Label fx:id="welcomeLabel" style="-fx-font-size: 18px;"/>
         <Region HBox.hgrow="ALWAYS"/>
+        <!--
+        The profile button. It takes the user to their profile page.
+        -->
         <Button text="Profile" onAction="#handleMyAccount"/>
+        <!--
+        The logout button. It logs the user out of the system.
+        -->
         <Button text="Logout" onAction="#handleLogout"/>
     </HBox>
 
     <TabPane VBox.vgrow="ALWAYS">
+        <!--
+        The search books tab. It displays a table of all the books in the library, and allows the user to search for books.
+        -->
         <Tab text="Search Books" closable="false">
             <VBox spacing="10">
                 <HBox spacing="10" alignment="CENTER">
+                    <!--
+                    The search field. The user can type in the field to search for books.
+                    -->
                     <TextField fx:id="bookSearchField" promptText="Search books..." HBox.hgrow="ALWAYS" onAction="#handleSearchBooks"/>
+                    <!--
+                    The search button. It triggers the search when clicked.
+                    -->
                     <Button text="Search" onAction="#handleSearchBooks"/>
+                    <!--
+                    The request book button. It triggers the request book dialog when clicked.
+                    -->
                     <Button fx:id="requestBookButton" text="Request Book" onAction="#handleRequestBook" disable="true"/>
                 </HBox>
+                <!--
+                The table of books. It displays the results of the search.
+                -->
                 <TableView fx:id="booksTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
                         <TableColumn fx:id="authorColumn" text="Author" prefWidth="150"/>
                         <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="availableColumn" text="Available Copies" prefWidth="120"/>
+
                     </columns>
                 </TableView>
             </VBox>
         </Tab>
 
+        <!--
+        The my requests tab. It displays a table of all the requests made by the user.
+        -->
         <Tab text="My Requests" closable="false">
             <VBox spacing="10">
                 <TableView fx:id="requestsTable" VBox.vgrow="ALWAYS">
@@ -50,6 +86,9 @@
             </VBox>
         </Tab>
 
+        <!--
+        The my borrowings tab. It displays a table of all the books borrowed by the user.
+        -->
         <Tab text="My Borrowings" closable="false">
             <VBox spacing="10">
                 <TableView fx:id="borrowingsTable" VBox.vgrow="ALWAYS">
@@ -63,4 +102,4 @@
             </VBox>
         </Tab>
     </TabPane>
-</VBox> 
+</VBox>

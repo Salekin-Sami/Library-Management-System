@@ -20,6 +20,12 @@ public class BookApiService {
         this.client = new OkHttpClient();
     }
 
+    /**
+     * Searches for books using the Google Books API.
+     * @param query The search query.
+     * @return A list of books matching the search query.
+     * @throws IOException If there is an error connecting to the API.
+     */
     public List<Book> searchBooks(String query) throws IOException {
         List<Book> books = new ArrayList<>();
         String url = GOOGLE_BOOKS_SEARCH_URL + query.replace(" ", "+");
@@ -32,6 +38,7 @@ public class BookApiService {
                 String jsonResponse = response.body().string();
                 JSONObject jsonObject = new JSONObject(jsonResponse);
 
+                // Check if the response contains "items"
                 if (jsonObject.has("items")) {
                     JSONArray items = jsonObject.getJSONArray("items");
                     for (int i = 0; i < items.length(); i++) {

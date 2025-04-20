@@ -17,8 +17,8 @@ public class AuthService {
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            String email = "sirajussalekin23522@gmail.com";
-            String password = "admin123";
+            String email = "sami@gmail.com";
+            String password = "12345";
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
             stmt.setString(1, email);
@@ -32,37 +32,66 @@ public class AuthService {
         }
     }
 
+    /**
+     * Logs in a user with the given email and password. If the login is
+     * successful, the current user ID is stored in the class and the
+     * corresponding User object is returned.
+     *
+     * @param email the email to log in with
+     * @param password the password to log in with
+     * @param role the role of the user to log in with (e.g. "admin" or "student")
+     * @return the User object of the logged in user, or null if the login
+     *         failed
+     */
     public User login(String email, String password, String role) {
+        // The SQL query to select the user by email and role
         String sql = "SELECT id, password_hash, role FROM users WHERE email = ? AND role = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
+                // Prepare the statement with the SQL query
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            // Set the email parameter for the query
             stmt.setString(1, email);
+
+            // Set the role parameter for the query
             stmt.setString(2, role);
+
+            // Execute the query and get the result set
             ResultSet rs = stmt.executeQuery();
 
+            // Check if a record was found
             if (rs.next()) {
+                // Get the stored hash from the record
                 String storedHash = rs.getString("password_hash");
+
+                // Check if the given password matches the stored hash
                 if (BCrypt.checkpw(password, storedHash)) {
+                    // If the login is successful, store the current user ID
                     currentUserId = rs.getInt("id");
+
+                    // Create a new User object from the record
                     User user = new User();
                     user.setId(rs.getInt("id"));
                     user.setEmail(email);
                     user.setRole(rs.getString("role"));
+
+                    // Return the User object
                     return user;
                 }
             }
         } catch (SQLException e) {
+            // Print the stack trace if an error occurs
             e.printStackTrace();
         }
+        // Return null if the login failed
         return null;
     }
 
     public int getCurrentUserId() {
         return currentUserId;
     }
-
+    //We're not using this method in the current implementation, but it's here for future use.
     public boolean register(String email, String password) throws SQLException {
         String query = "INSERT INTO users (email, password_hash, role) VALUES (?, ?, 'student')";
 
@@ -76,7 +105,7 @@ public class AuthService {
             return stmt.executeUpdate() > 0;
         }
     }
-
+    //We'ew not using this method in the current implementation, but it's here for future use.
     public boolean requestPasswordReset(String email) throws SQLException {
         String tempPassword = generateTempPassword();
         String hashedTempPassword = BCrypt.hashpw(tempPassword, BCrypt.gensalt());
@@ -99,26 +128,46 @@ public class AuthService {
         }
         return false;
     }
-
+    //not 
+    /**
+     * Resets the user's password if the provided temp password is valid
+     * @param email The email address of the user to reset the password for
+     * @param tempPassword The temporary password to compare against the stored temp password
+     * @param newPassword The new password to set for the user
+     * @return true if the password was successfully reset, false otherwise
+     * @throws SQLException
+     */
     public boolean resetPassword(String email, String tempPassword, String newPassword) throws SQLException {
+        // Get the user's record from the database to compare the temp passwords
         String query = "SELECT * FROM users WHERE email = ? AND temp_password_expiry > NOW()";
 
         try (Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            // Set the email parameter for the query
             stmt.setString(1, email);
+
+            // Execute the query and get the result set
             ResultSet rs = stmt.executeQuery();
 
+            // Check if a record was found and if the temp password matches
             if (rs.next() && BCrypt.checkpw(tempPassword, rs.getString("temp_password"))) {
+                // If the temp password matches, update the user's record with the new password
                 String updateQuery = "UPDATE users SET password_hash = ?, temp_password = NULL, temp_password_expiry = NULL, password_reset_required = false WHERE email = ?";
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                    // Hash the new password
                     String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+                    // Set the parameters for the update query
                     updateStmt.setString(1, hashedNewPassword);
                     updateStmt.setString(2, email);
+
+                    // Execute the update query and check if a row was affected
                     return updateStmt.executeUpdate() > 0;
                 }
             }
         }
+        // If the temp password doesn't match or no record was found, return false
         return false;
     }
 

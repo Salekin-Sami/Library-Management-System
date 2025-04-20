@@ -254,6 +254,13 @@ public class Book {
         return !getAvailableCopies().isEmpty();
     }
 
+@Transient
+public int getAvailableCopiesCount() {
+    return (int) copies.stream()
+                       .filter(BookCopy::isAvailable)
+                       .count();
+}
+
     @Override
     public String toString() {
         return "Book{" +

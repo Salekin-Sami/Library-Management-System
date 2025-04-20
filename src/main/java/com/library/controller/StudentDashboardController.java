@@ -47,6 +47,8 @@ public class StudentDashboardController {
     @FXML
     private TableColumn<Book, String> statusColumn;
     @FXML
+    private TableColumn<Book, Integer> availableColumn;
+    @FXML
     private Button requestBookButton;
 
     @FXML
@@ -85,6 +87,10 @@ public class StudentDashboardController {
         this.borrowingService = new BorrowingService();
     }
 
+    /**
+     * Initializes the StudentDashboardController by setting up the tables, adding
+     * listeners to the search fields, and loading the initial data.
+     */
     @FXML
     public void initialize() {
         try {
@@ -94,6 +100,7 @@ public class StudentDashboardController {
             setupBorrowingsTable();
 
             // Add listeners to search fields
+            // Clear search results when search field is empty
             bookSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue.isEmpty()) {
                     loadBooks();
@@ -108,6 +115,12 @@ public class StudentDashboardController {
         }
     }
 
+    /**
+     * Sets the current user and loads the associated student data.
+     * If the student is found, the welcome label is updated with the student's name.
+     * If the student is not found, an error alert is shown.
+     * @param user The current user.
+     */
     public void setUser(User user) {
         this.currentUser = user;
         // Get the student associated with this user
@@ -142,21 +155,32 @@ public class StudentDashboardController {
         }
     }
 
+    /**
+     * Handles the action of requesting a book.
+     * If the student has reached the maximum number of books they can borrow, an error alert is shown.
+     * If the request is successful, a success alert is shown and the requests table is refreshed.
+     * If an error occurs while submitting the request, an error alert is shown.
+     * @param book The selected book.
+     */
     @FXML
     private void handleBookRequest(Book book) {
+        // Check if student has reached the maximum number of books they can borrow
         if (!currentStudent.canBorrowMore()) {
             showAlert("Error", "You have reached the maximum number of books you can borrow!");
             return;
         }
 
         try {
-            LocalDateTime dueDate = LocalDateTime.now().plusDays(14); // 2 weeks borrowing period
+            // Set the due date to 2 weeks from now
+            LocalDateTime dueDate = LocalDateTime.now().plusDays(14);
+
+            // Submit the request
             boolean success = studentService.requestBook(currentStudent.getId(), book.getId(),
                     dueDate);
 
             if (success) {
                 showAlert("Success", "Book request submitted successfully!");
-                loadRequests();
+                loadRequests(); // Refresh requests table
             } else {
                 showAlert("Error", "Failed to submit book request. Please try again.");
             }
@@ -240,9 +264,16 @@ public class StudentDashboardController {
         }
     }
 
+    /**
+     * Loads all books from the database and sets the items in the books table.
+     * If an exception is thrown while loading the books, an error alert is shown.
+     */
     private void loadBooks() {
         try {
+            // Get all books
             List<Book> books = bookService.getAllBooks();
+
+            // Set books table items
             booksTable.setItems(FXCollections.observableArrayList(books));
         } catch (Exception e) {
             e.printStackTrace();
@@ -306,6 +337,23 @@ public class StudentDashboardController {
         }
     }
 
+    /**
+     * Sets up the books table by setting up its columns and adding double-click
+     * handler to show book details.
+     *
+     * The columns are:
+     * <ul>
+     * <li>Title</li>
+     * <li>Author</li>
+     * <li>Status (Available/Not Available)</li>
+     * </ul>
+     *
+     * When a book is double-clicked, its details are shown in a dialog.
+     *
+     * The request button is also enabled/disabled based on the selection in the
+     * table. It is enabled only if a book is selected and it has at least one
+     * available copy.
+     */
     private void setupBooksTable() {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
@@ -316,6 +364,7 @@ public class StudentDashboardController {
                     .count();
             return new SimpleStringProperty(availableCopies > 0 ? "Available" : "Not Available");
         });
+        availableColumn.setCellValueFactory(new PropertyValueFactory<>("availableCopiesCount"));
 
         // Add double-click handler for book details
         booksTable.setOnMouseClicked(event -> {
@@ -338,14 +387,33 @@ public class StudentDashboardController {
                 });
     }
 
+    /**
+     * Sets up the requests table by setting up its columns.
+     * <p>
+     * The columns are:
+     * <ul>
+     * <li>Book Title</li>
+     * <li>Request Date</li>
+     * <li>Due Date</li>
+     * <li>Status</li>
+     * </ul>
+     */
     private void setupRequestsTable() {
+        // Book title column
         requestBookTitleColumn
                 .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBook().getTitle()));
+
+        // Request date column
         requestDateColumn.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+
+        // Due date column
         requestDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+
+        // Status column
         requestStatusColumn
                 .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
     }
+
 
     private void setupBorrowingsTable() {
         borrowingBookTitleColumn

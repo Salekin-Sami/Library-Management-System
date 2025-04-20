@@ -26,6 +26,12 @@ public class StudentProfile {
     }
 
     // Getters and Setters
+
+    /**
+     * Returns the user ID of the student.
+     * 
+     * @return the user ID
+     */
     public int getUserId() {
         return userId;
     }
