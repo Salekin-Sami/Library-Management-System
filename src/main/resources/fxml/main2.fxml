@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.collections.FXCollections?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="com.library.controller.MainController"
+      fx:id="root"
+      stylesheets="@../css/styles.css"
+      spacing="0" styleClass="main-container">
+    
+    <!-- Modern App Bar -->
+    <HBox styleClass="app-bar" alignment="CENTER_LEFT">
+        <Label text="Library Management System" styleClass="app-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <!-- User Info Section -->
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="user-info">
+            <VBox spacing="2" alignment="CENTER_RIGHT">
+                <Label fx:id="welcomeLabel" styleClass="user-name"/>
+                <Label fx:id="dateLabel" styleClass="user-role"/>
+            </VBox>
+            <Button fx:id="logoutButton" styleClass="icon-button">
+                <tooltip>
+                    <Tooltip text="Logout"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyph="SIGN_OUT" size="16"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </HBox>
+
+    <!-- Main Content Area -->
+    <HBox styleClass="content-area" spacing="0">
+        <!-- Modern Sidebar Navigation -->
+        <VBox styleClass="sidebar" spacing="0">
+            <Button text="Dashboard" styleClass="nav-button" onAction="#handleShowDashboard">
+                <graphic>
+                    <FontAwesomeIconView glyph="DASHBOARD" size="16"/>
+                </graphic>
+            </Button>
+            <Button text="Books" styleClass="nav-button active" onAction="#handleShowBooks">
+                <graphic>
+                    <FontAwesomeIconView glyph="BOOK" size="16"/>
+                </graphic>
+            </Button>
+            <Button text="Students" styleClass="nav-button" onAction="#handleShowStudents">
+                <graphic>
+                    <FontAwesomeIconView glyph="USERS" size="16"/>
+                </graphic>
+            </Button>
+            <Button text="Borrowings" styleClass="nav-button" onAction="#handleShowBorrowings">
+                <graphic>
+                    <FontAwesomeIconView glyph="EXCHANGE" size="16"/>
+                </graphic>
+            </Button>
+            <Button text="Requests" styleClass="nav-button" onAction="#handleShowRequests">
+                <graphic>
+                    <FontAwesomeIconView glyph="CLIPBOARD" size="16"/>
+                </graphic>
+            </Button>
+            <Button text="Reports" styleClass="nav-button" onAction="#handleShowReports">
+                <graphic>
+                    <FontAwesomeIconView glyph="BAR_CHART" size="16"/>
+                </graphic>
+            </Button>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Settings" styleClass="nav-button" onAction="#handleShowSettings">
+                <graphic>
+                    <FontAwesomeIconView glyph="COG" size="16"/>
+                </graphic>
+            </Button>
+        </VBox>
+
+        <!-- Content Pane -->
+        <VBox styleClass="main-content" spacing="0">
+            <!-- Toolbar with search and actions -->
+            <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="10">
+                <TextField fx:id="searchField" styleClass="search-field" promptText="Search..."/>
+                <Button text="Search" styleClass="flat-button" onAction="#handleSearch"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Add New" styleClass="primary-button" onAction="#handleAddNew">
+                    <graphic>
+                        <FontAwesomeIconView glyph="PLUS" size="14"/>
+                    </graphic>
+                </Button>
+                <Button text="Refresh" styleClass="flat-button" onAction="#handleRefresh">
+                    <graphic>
+                        <FontAwesomeIconView glyph="REFRESH" size="14"/>
+                    </graphic>
+                </Button>
+            </HBox>
+
+            <!-- Tabbed Content Area -->
+            <TabPane styleClass="modern-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <!-- Books Tab -->
+                <Tab text="Books" styleClass="content-tab">
+                    <content>
+                        <VBox spacing="15" styleClass="tab-content">
+                            <!-- Books Table -->
+                            <TableView fx:id="booksTable" styleClass="modern-table" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="idColumn" text="ID" styleClass="table-column" prefWidth="60"/>
+                                    <TableColumn fx:id="titleColumn" text="Title" styleClass="table-column" prefWidth="250"/>
+                                    <TableColumn fx:id="authorColumn" text="Author" styleClass="table-column" prefWidth="180"/>
+                                    <TableColumn fx:id="isbnColumn" text="ISBN" styleClass="table-column" prefWidth="150"/>
+                                    <TableColumn fx:id="categoryColumn" text="Category" styleClass="table-column" prefWidth="120"/>
+                                    <TableColumn fx:id="statusColumn" text="Status" styleClass="table-column" prefWidth="100"/>
+                                    <TableColumn fx:id="totalCopiesColumn" text="Copies" styleClass="table-column" prefWidth="80"/>
+                                    <TableColumn text="Actions" styleClass="table-column" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                            
+                            <!-- Pagination Controls -->
+                            <HBox styleClass="pagination-controls" alignment="CENTER_RIGHT" spacing="10">
+                                <Label text="Items per page:" styleClass="pagination-label"/>
+                                <ComboBox styleClass="page-size-combo">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="10"/>
+                                            <String fx:value="25"/>
+                                            <String fx:value="50"/>
+                                            <String fx:value="100"/>
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="25"/>
+                                    </value>
+                                </ComboBox>
+                                <Label fx:id="pageInfoLabel" styleClass="pagination-label"/>
+                                <Button styleClass="pagination-button" onAction="#handlePreviousPage">
+                                    <graphic>
+                                        <FontAwesomeIconView glyph="CHEVRON_LEFT" size="14"/>
+                                    </graphic>
+                                </Button>
+                                <Button styleClass="pagination-button" onAction="#handleNextPage">
+                                    <graphic>
+                                        <FontAwesomeIconView glyph="CHEVRON_RIGHT" size="14"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </HBox>
+
+    <!-- Status Bar -->
+    <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="10">
+        <FontAwesomeIconView glyph="INFO_CIRCLE" size="14" styleClass="status-icon"/>
+        <Label fx:id="statusText" styleClass="status-text"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="v1.0.0" styleClass="version-label"/>
+    </HBox>
+</VBox>

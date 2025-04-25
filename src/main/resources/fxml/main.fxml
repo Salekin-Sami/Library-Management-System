@@ -6,6 +6,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import javafx.scene.chart.*?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
       fx:controller="com.library.controller.MainController"
@@ -200,6 +201,8 @@
 
                 <Label text="Recent Activities" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
                 <ListView fx:id="recentActivitiesList" VBox.vgrow="ALWAYS" prefHeight="200"/>
+                
+                <PieChart fx:id="booksPieChart" title="Books Overview" VBox.vgrow="ALWAYS"/>
             </VBox>
         </Tab>
     </TabPane>

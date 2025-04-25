@@ -28,6 +28,9 @@ import java.time.format.DateTimeFormatter;
 import com.library.model.BookRequest;
 import com.library.model.RequestStatus;
 import java.util.stream.Collectors;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.PieChart;
 
 public class MainController {
     private final BookService bookService;
@@ -133,6 +136,10 @@ public class MainController {
 
     @FXML
     private ComboBox<String> borrowingFilter;
+    @FXML
+    private BarChart<String, Number> statisticsBarChart;
+    @FXML
+    private PieChart booksPieChart;
 
     public MainController() {
         this.bookService = new BookService();
@@ -523,6 +530,13 @@ public class MainController {
                     .mapToDouble(b -> b.calculateFine())
                     .sum();
             totalFinesLabel.setText(String.format("৳%.2f", totalUnpaidFines));
+
+            // Populate PieChart
+            booksPieChart.getData().clear();
+            booksPieChart.getData().addAll(
+                    new PieChart.Data("Total Books", totalBooks),
+                    new PieChart.Data("Borrowed Books", currentBorrowings),
+                    new PieChart.Data("Overdue Books", overdueBooks));
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to update statistics: " + e.getMessage(), Alert.AlertType.ERROR);
