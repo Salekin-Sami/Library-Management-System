@@ -21,6 +21,7 @@
             <Button text="Students" styleClass="sidebar-btn" onAction="#showStudents" />
             <Button text="Borrowings" styleClass="sidebar-btn" onAction="#showBorrowings" />
             <Button text="Requests" styleClass="sidebar-btn" onAction="#showRequests" />
+            <Button text="Chat" styleClass="sidebar-btn" onAction="#showChat" />
             <Button text="Logout" styleClass="sidebar-btn logout" onAction="#handleLogout" />
         </VBox>
     </left>
@@ -159,21 +160,21 @@
                     </TableView>
                 </VBox>
             </AnchorPane>
+            <AnchorPane fx:id="chatView" visible="false">
+                <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20" />
+                    </padding>
+                    <Label text="Admin-Client Chat" style="-fx-font-weight: bold; -fx-font-size: 16;" />
+                    <ListView fx:id="chatListView" prefHeight="350" VBox.vgrow="ALWAYS" />
+                    <HBox spacing="5">
+                        <TextField fx:id="chatInputField" promptText="Type a message..." HBox.hgrow="ALWAYS" />
+                        <Button text="Send" onAction="#handleSendChatMessage" />
+                    </HBox>
+                </VBox>
+            </AnchorPane>
         </StackPane>
     </center>
-
-    <!-- Header -->
-    <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-section">
-            <VBox spacing="5">
-                <Label fx:id="welcomeLabel" styleClass="title-label" />
-                <Label fx:id="dateLabel" styleClass="subtitle-label" />
-            </VBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <Button text="Toggle Theme" onAction="#handleToggleTheme" styleClass="header-btn" />
-
-        </HBox>
-    </top>
 
     <!-- Status Bar -->
     <bottom>

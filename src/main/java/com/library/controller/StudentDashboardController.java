@@ -30,6 +30,10 @@ import java.util.prefs.Preferences;
 import java.time.format.DateTimeFormatter;
 import com.library.service.BorrowingService;
 import java.io.IOException;
+import com.library.chat.ChatMessage;
+import com.library.chat.ChatService;
+import javafx.collections.ListChangeListener;
+import javafx.scene.layout.AnchorPane;
 
 public class StudentDashboardController {
     @FXML
@@ -73,6 +77,15 @@ public class StudentDashboardController {
     @FXML
     private TableColumn<Borrowing, String> borrowingStatusColumn;
 
+    @FXML
+    private AnchorPane clientChatPane;
+    @FXML
+    private ListView<ChatMessage> chatListView;
+    @FXML
+    private TextField chatInputField;
+    @FXML
+    private AnchorPane chatView;
+
     private final BookService bookService;
     private final StudentService studentService;
     private final BorrowingService borrowingService;
@@ -109,6 +122,18 @@ public class StudentDashboardController {
 
             // Load only books initially
             loadBooks();
+
+            // Chat setup
+            if (chatListView != null) {
+                // Always use currentStudent.getEmail() if available
+                chatListView.setItems(
+                        ChatService.getMessagesForRecipient(currentStudent != null ? currentStudent.getEmail() : null));
+                ChatService.getMessages().addListener((ListChangeListener<ChatMessage>) c -> {
+                    chatListView.setItems(ChatService
+                            .getMessagesForRecipient(currentStudent != null ? currentStudent.getEmail() : null));
+                    chatListView.scrollTo(chatListView.getItems().size() - 1);
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to initialize student dashboard: " + e.getMessage());
@@ -117,17 +142,26 @@ public class StudentDashboardController {
 
     /**
      * Sets the current user and loads the associated student data.
-     * If the student is found, the welcome label is updated with the student's name.
+     * If the student is found, the welcome label is updated with the student's
+     * name.
      * If the student is not found, an error alert is shown.
+     * 
      * @param user The current user.
      */
     public void setUser(User user) {
         this.currentUser = user;
-        // Get the student associated with this user
         this.currentStudent = studentService.getStudentByEmail(user.getEmail());
         if (currentStudent != null) {
             welcomeLabel.setText("Welcome, " + currentStudent.getName());
             loadInitialData();
+            // Update chatListView for the correct student after login
+            if (chatListView != null) {
+                chatListView.setItems(ChatService.getMessagesForRecipient(currentStudent.getEmail()));
+                ChatService.getMessages().addListener((ListChangeListener<ChatMessage>) c -> {
+                    chatListView.setItems(ChatService.getMessagesForRecipient(currentStudent.getEmail()));
+                    chatListView.scrollTo(chatListView.getItems().size() - 1);
+                });
+            }
         } else {
             showAlert("Error", "Student information not found.");
         }
@@ -137,6 +171,14 @@ public class StudentDashboardController {
         this.currentStudent = student;
         welcomeLabel.setText("Welcome, " + student.getName());
         loadInitialData();
+        // Update chatListView for the correct student after switching
+        if (chatListView != null) {
+            chatListView.setItems(ChatService.getMessagesForRecipient(student.getEmail()));
+            ChatService.getMessages().addListener((ListChangeListener<ChatMessage>) c -> {
+                chatListView.setItems(ChatService.getMessagesForRecipient(student.getEmail()));
+                chatListView.scrollTo(chatListView.getItems().size() - 1);
+            });
+        }
     }
 
     @FXML
@@ -157,9 +199,12 @@ public class StudentDashboardController {
 
     /**
      * Handles the action of requesting a book.
-     * If the student has reached the maximum number of books they can borrow, an error alert is shown.
-     * If the request is successful, a success alert is shown and the requests table is refreshed.
+     * If the student has reached the maximum number of books they can borrow, an
+     * error alert is shown.
+     * If the request is successful, a success alert is shown and the requests table
+     * is refreshed.
      * If an error occurs while submitting the request, an error alert is shown.
+     * 
      * @param book The selected book.
      */
     @FXML
@@ -414,7 +459,6 @@ public class StudentDashboardController {
                 .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
     }
 
-
     private void setupBorrowingsTable() {
         borrowingBookTitleColumn
                 .setCellValueFactory(
@@ -445,5 +489,32 @@ public class StudentDashboardController {
             e.printStackTrace();
             showAlert("Error", "Failed to load borrowings: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void handleSendChatMessage() {
+        String text = chatInputField.getText();
+        if (text != null && !text.trim().isEmpty()) {
+            String sender = (currentStudent != null) ? currentStudent.getName() : "Client";
+            String recipientId = (currentStudent != null) ? currentStudent.getEmail() : null;
+            ChatMessage message = new ChatMessage(sender, text.trim(), recipientId);
+            ChatService.sendMessage(message);
+            chatInputField.clear();
+            // Refresh chatListView after sending
+            if (chatListView != null) {
+                chatListView.setItems(ChatService.getMessagesForRecipient(recipientId));
+                chatListView.scrollTo(chatListView.getItems().size() - 1);
+            }
+        }
+    }
+
+    @FXML
+    private void showChat() {
+        // Hide all other views
+        for (var node : chatView.getParent().getChildrenUnmodifiable()) {
+            if (node != chatView)
+                node.setVisible(false);
+        }
+        chatView.setVisible(true);
     }
 }

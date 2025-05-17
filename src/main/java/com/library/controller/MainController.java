@@ -34,6 +34,9 @@ import java.util.Map;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
+import com.library.chat.ChatMessage;
+import com.library.chat.ChatService;
+import javafx.collections.ListChangeListener;
 
 public class MainController {
     private final BookService bookService;
@@ -156,6 +159,15 @@ public class MainController {
     @FXML
     private StackPane mainContent;
 
+    @FXML
+    private AnchorPane adminChatPane;
+    @FXML
+    private ListView<ChatMessage> chatListView;
+    @FXML
+    private TextField chatInputField;
+    @FXML
+    private AnchorPane chatView;
+
     public MainController() {
         this.bookService = new BookService();
         this.studentService = new StudentService();
@@ -225,6 +237,27 @@ public class MainController {
 
             // Show dashboard by default
             showDashboard();
+
+            // Chat setup
+            if (chatListView != null) {
+                // By default, show all messages. If a student is selected, show only their
+                // chat.
+                chatListView.setItems(FXCollections.observableArrayList());
+                studentsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldStudent, newStudent) -> {
+                    if (newStudent != null) {
+                        chatListView.setItems(ChatService.getMessagesForRecipient(newStudent.getEmail()));
+                    } else {
+                        chatListView.setItems(FXCollections.observableArrayList());
+                    }
+                });
+                ChatService.getMessages().addListener((ListChangeListener<ChatMessage>) c -> {
+                    Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
+                    if (selectedStudent != null) {
+                        chatListView.setItems(ChatService.getMessagesForRecipient(selectedStudent.getEmail()));
+                        chatListView.scrollTo(chatListView.getItems().size() - 1);
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to initialize main view: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -1435,6 +1468,8 @@ public class MainController {
         studentsView.setVisible(false);
         borrowingsView.setVisible(false);
         requestsView.setVisible(false);
+        if (chatView != null)
+            chatView.setVisible(false);
     }
 
     @FXML
@@ -1444,6 +1479,8 @@ public class MainController {
         studentsView.setVisible(false);
         borrowingsView.setVisible(false);
         requestsView.setVisible(false);
+        if (chatView != null)
+            chatView.setVisible(false);
     }
 
     @FXML
@@ -1453,6 +1490,8 @@ public class MainController {
         studentsView.setVisible(true);
         borrowingsView.setVisible(false);
         requestsView.setVisible(false);
+        if (chatView != null)
+            chatView.setVisible(false);
     }
 
     @FXML
@@ -1462,6 +1501,8 @@ public class MainController {
         studentsView.setVisible(false);
         borrowingsView.setVisible(true);
         requestsView.setVisible(false);
+        if (chatView != null)
+            chatView.setVisible(false);
     }
 
     @FXML
@@ -1471,6 +1512,18 @@ public class MainController {
         studentsView.setVisible(false);
         borrowingsView.setVisible(false);
         requestsView.setVisible(true);
+        if (chatView != null)
+            chatView.setVisible(false);
+    }
+
+    @FXML
+    private void showChat() {
+        dashboardView.setVisible(false);
+        booksView.setVisible(false);
+        studentsView.setVisible(false);
+        borrowingsView.setVisible(false);
+        requestsView.setVisible(false);
+        chatView.setVisible(true);
     }
 
     @FXML
@@ -1479,6 +1532,26 @@ public class MainController {
             borrowingFilter.getItems().clear();
             borrowingFilter.getItems().addAll("All", "Borrowed", "Overdue", "Returned");
             borrowingFilter.setValue("All");
+        }
+    }
+
+    @FXML
+    private void handleSendChatMessage() {
+        String text = chatInputField.getText();
+        if (text != null && !text.trim().isEmpty()) {
+            String sender = (currentUser != null && currentUser.getRole().equalsIgnoreCase("ADMIN")) ? "Admin"
+                    : "Unknown";
+            Student selectedStudent = studentsTable.getSelectionModel().getSelectedItem();
+            String recipientId = (selectedStudent != null) ? selectedStudent.getEmail() : null;
+            if (recipientId == null) {
+                showAlert("No Student Selected", "Please select a student to chat with.", Alert.AlertType.WARNING);
+                return;
+            }
+            ChatMessage message = new ChatMessage(sender, text.trim(), recipientId);
+            ChatService.sendMessage(message);
+            chatInputField.clear();
+            chatListView.setItems(ChatService.getMessagesForRecipient(recipientId));
+            chatListView.scrollTo(chatListView.getItems().size() - 1);
         }
     }
 }
