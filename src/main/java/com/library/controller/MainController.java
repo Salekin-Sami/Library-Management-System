@@ -21,7 +21,6 @@ import javafx.scene.Scene;
 import java.io.IOException;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.layout.VBox;
 import com.library.model.User;
 import java.util.prefs.Preferences;
 import java.time.format.DateTimeFormatter;
@@ -32,6 +31,9 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.PieChart;
 import java.util.Map;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 
 public class MainController {
     private final BookService bookService;
@@ -80,9 +82,9 @@ public class MainController {
     @FXML
     private TableColumn<Borrowing, String> borrowingStudentColumn;
     @FXML
-    private TableColumn<Borrowing, LocalDate> borrowingDateColumn;
+    private TableColumn<Borrowing, String> borrowingDateColumn;
     @FXML
-    private TableColumn<Borrowing, LocalDate> borrowingDueDateColumn;
+    private TableColumn<Borrowing, String> borrowingDueDateColumn;
     @FXML
     private TableColumn<Borrowing, String> borrowingStatusColumn;
     @FXML
@@ -116,9 +118,6 @@ public class MainController {
     private TextField borrowingSearchField;
 
     @FXML
-    private VBox root;
-
-    @FXML
     private Label welcomeLabel;
 
     @FXML
@@ -144,6 +143,19 @@ public class MainController {
     @FXML
     private BarChart<String, Number> booksByCategoryBarChart;
 
+    @FXML
+    private VBox dashboardView;
+    @FXML
+    private AnchorPane booksView;
+    @FXML
+    private AnchorPane studentsView;
+    @FXML
+    private AnchorPane borrowingsView;
+    @FXML
+    private AnchorPane requestsView;
+    @FXML
+    private StackPane mainContent;
+
     public MainController() {
         this.bookService = new BookService();
         this.studentService = new StudentService();
@@ -166,8 +178,7 @@ public class MainController {
     @FXML
     public void initialize() {
         try {
-            // Set initial theme
-            root.getStyleClass().add("light-theme");
+            mainContent.getStyleClass().add("light-theme");
 
             // Setup tables
             setupBookTable();
@@ -208,6 +219,9 @@ public class MainController {
 
             // Load initial data
             loadInitialData();
+
+            // Show dashboard by default
+            showDashboard();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to initialize main view: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -362,12 +376,21 @@ public class MainController {
                         cellData -> new SimpleStringProperty(cellData.getValue().getBookCopy().getBook().getTitle()));
         borrowingStudentColumn
                 .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStudent().getName()));
-        borrowingDateColumn.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
-        borrowingDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        borrowingDateColumn.setCellValueFactory(cellData -> {
+            LocalDate date = cellData.getValue().getBorrowDate();
+            String formatted = (date != null) ? date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : "";
+            return new SimpleStringProperty(formatted);
+        });
+        borrowingDueDateColumn.setCellValueFactory(cellData -> {
+            LocalDate date = cellData.getValue().getDueDate();
+            String formatted = (date != null) ? date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : "";
+            return new SimpleStringProperty(formatted);
+        });
         borrowingStatusColumn.setCellValueFactory(cellData -> {
             Borrowing borrowing = cellData.getValue();
             String status = borrowing.getReturnDate() != null ? "Returned" : "Borrowed";
-            if (borrowing.getReturnDate() == null && borrowing.getDueDate().isBefore(LocalDate.now())) {
+            if (borrowing.getReturnDate() == null && borrowing.getDueDate() != null
+                    && borrowing.getDueDate().isBefore(LocalDate.now())) {
                 status = "Overdue";
             }
             return new SimpleStringProperty(status);
@@ -484,14 +507,26 @@ public class MainController {
     }
 
     private void filterAndDisplayBorrowings(List<Borrowing> borrowings) {
-        String filterValue = borrowingFilter.getValue();
+        String filterValue = borrowingFilter != null ? borrowingFilter.getValue() : null;
         List<Borrowing> filteredBorrowings = borrowings.stream()
                 .filter(borrowing -> {
+                    // Defensive null checks for filterValue and borrowing fields
+                    if (borrowing == null)
+                        return false;
+                    // Defensive: skip borrowings with missing required fields
+                    // (prevents NPE in equals/hashCode/stream ops)
+                    if (borrowing.getBookCopy() == null || borrowing.getStudent() == null) {
+                        return false;
+                    }
+                    // Defensive: skip if filterValue is null or empty (show all)
+                    if (filterValue == null || filterValue.trim().isEmpty()) {
+                        return true;
+                    }
                     switch (filterValue) {
                         case "Borrowed":
-                            return borrowing.getReturnDate() == null && !borrowing.isOverdue();
+                            return borrowing.getReturnDate() == null && !safeIsOverdue(borrowing);
                         case "Overdue":
-                            return borrowing.getReturnDate() == null && borrowing.isOverdue();
+                            return borrowing.getReturnDate() == null && safeIsOverdue(borrowing);
                         case "Returned":
                             return borrowing.getReturnDate() != null;
                         default:
@@ -500,6 +535,15 @@ public class MainController {
                 })
                 .collect(Collectors.toList());
         borrowingsTable.setItems(FXCollections.observableArrayList(filteredBorrowings));
+    }
+
+    // Helper to safely check overdue status
+    private boolean safeIsOverdue(Borrowing borrowing) {
+        try {
+            return borrowing != null && borrowing.isOverdue();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void loadRecentActivities() {
@@ -569,7 +613,7 @@ public class MainController {
             prefs.putBoolean("remember", false);
 
             // Get the current stage
-            Stage currentStage = (Stage) root.getScene().getWindow();
+            Stage currentStage = (Stage) mainContent.getScene().getWindow();
 
             // Load login view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
@@ -1034,11 +1078,11 @@ public class MainController {
     private void handleToggleTheme() {
         isDarkTheme = !isDarkTheme;
         if (isDarkTheme) {
-            root.getStyleClass().remove("light-theme");
-            root.getStyleClass().add("dark-theme");
+            mainContent.getStyleClass().remove("light-theme");
+            mainContent.getStyleClass().add("dark-theme");
         } else {
-            root.getStyleClass().remove("dark-theme");
-            root.getStyleClass().add("light-theme");
+            mainContent.getStyleClass().remove("dark-theme");
+            mainContent.getStyleClass().add("light-theme");
         }
     }
 
@@ -1379,5 +1423,50 @@ public class MainController {
         } catch (Exception e) {
             showAlert("Error", "Failed to search students: " + e.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+
+    @FXML
+    private void showDashboard() {
+        dashboardView.setVisible(true);
+        booksView.setVisible(false);
+        studentsView.setVisible(false);
+        borrowingsView.setVisible(false);
+        requestsView.setVisible(false);
+    }
+
+    @FXML
+    private void showBooks() {
+        dashboardView.setVisible(false);
+        booksView.setVisible(true);
+        studentsView.setVisible(false);
+        borrowingsView.setVisible(false);
+        requestsView.setVisible(false);
+    }
+
+    @FXML
+    private void showStudents() {
+        dashboardView.setVisible(false);
+        booksView.setVisible(false);
+        studentsView.setVisible(true);
+        borrowingsView.setVisible(false);
+        requestsView.setVisible(false);
+    }
+
+    @FXML
+    private void showBorrowings() {
+        dashboardView.setVisible(false);
+        booksView.setVisible(false);
+        studentsView.setVisible(false);
+        borrowingsView.setVisible(true);
+        requestsView.setVisible(false);
+    }
+
+    @FXML
+    private void showRequests() {
+        dashboardView.setVisible(false);
+        booksView.setVisible(false);
+        studentsView.setVisible(false);
+        borrowingsView.setVisible(false);
+        requestsView.setVisible(true);
     }
 }
