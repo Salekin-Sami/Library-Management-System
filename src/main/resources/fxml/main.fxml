@@ -171,7 +171,7 @@
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
             <Button text="Toggle Theme" onAction="#handleToggleTheme" styleClass="header-btn" />
-            <Button text="My Account" onAction="#handleMyAccount" styleClass="header-btn" />
+
         </HBox>
     </top>
 
@@ -179,7 +179,7 @@
     <bottom>
         <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="status-bar">
             <Text fx:id="statusText" styleClass="status-text" />
-            <Text text="Developed by Group 9, ICE-21 Batch" style="-fx-font-size: 12px; -fx-fill: #888;" />
+            <Text text="Developed by Group 9, ICE-21 Batch" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-fill: #2C3E50; -fx-effect: dropshadow(gaussian, #FFFFFF, 2, 0, 0, 0);" />
         </HBox>
     </bottom>
 </BorderPane>

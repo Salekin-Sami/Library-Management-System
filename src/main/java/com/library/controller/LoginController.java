@@ -353,24 +353,29 @@ public class LoginController {
     /**
      * Handles the login button click event.
      * <p>
-     * First, it checks if the email and password fields are empty. If either is empty,
+     * First, it checks if the email and password fields are empty. If either is
+     * empty,
      * it shows an error alert and returns.
      * <p>
      * Then, it adds the email to the email history on a successful login.
      * <p>
-     * After that, it shows a loading overlay and simulates a network delay (1 second).
+     * After that, it shows a loading overlay and simulates a network delay (1
+     * second).
      * <p>
      * Finally, it attempts to log in the user using the provided credentials.
-     * If the login is successful, it saves the credentials if the remember me checkbox
-     * is checked, and loads the appropriate dashboard based on the role. If the login
+     * If the login is successful, it saves the credentials if the remember me
+     * checkbox
+     * is checked, and loads the appropriate dashboard based on the role. If the
+     * login
      * fails, it shows an error alert.
+     * 
      * @param event The login button click event.
      */
     @FXML
     private void handleLogin() {
         String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
-        String role = roleComboBox.getValue();
+        String role = roleComboBox.getValue().toLowerCase();
 
         if (email.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Please enter both email and password.");
@@ -399,12 +404,12 @@ public class LoginController {
                             }
 
                             // Load appropriate dashboard based on role
-                            String fxmlPath = user.getRole().equals("ADMIN") ? "/fxml/main.fxml"
+                            String fxmlPath = user.getRole().equalsIgnoreCase("admin") ? "/fxml/main.fxml"
                                     : "/fxml/student_dashboard.fxml";
                             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                             Parent root = loader.load();
 
-                            if (user.getRole().equals("ADMIN")) {
+                            if (user.getRole().equalsIgnoreCase("admin")) {
                                 MainController controller = loader.getController();
                                 controller.setUser(user);
                             } else {
@@ -450,7 +455,8 @@ public class LoginController {
             }
         }).start();
     }
-    //  We are not using this currently
+
+    // We are not using this currently
     @FXML
     private void handleRegister() {
         try {
