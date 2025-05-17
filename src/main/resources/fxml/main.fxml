@@ -12,6 +12,18 @@
             fx:controller="com.library.controller.MainController"
             fx:id="root"
             stylesheets="@../css/styles.css">
+    <!-- Header Bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-section">
+            <VBox spacing="5">
+                <Label fx:id="welcomeLabel" styleClass="title-label" />
+                <Label fx:id="dateLabel" styleClass="subtitle-label" />
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="Toggle Theme" onAction="#handleToggleTheme" styleClass="header-btn" />
+        </HBox>
+    </top>
+
     <!-- Sidebar Navigation -->
     <left>
         <VBox spacing="10" styleClass="sidebar" alignment="TOP_CENTER">
