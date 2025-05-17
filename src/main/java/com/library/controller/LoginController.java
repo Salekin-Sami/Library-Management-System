@@ -60,8 +60,8 @@ public class LoginController {
     @FXML
     public void initialize() {
         // Add items to the role combo box
-        roleComboBox.getItems().addAll("admin", "student");
-        roleComboBox.setValue("student"); // Set default value
+        roleComboBox.getItems().addAll("Admin", "Student");
+        roleComboBox.setValue("Student"); // Set default value
 
         // Hide register button since registration will be admin-only
         registerButton.setVisible(false);

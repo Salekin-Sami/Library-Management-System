@@ -1,5 +1,5 @@
 .root {
-    -fx-background-color: linear-gradient(to bottom right, #CBF1F5, #A6E3E9);
+    -fx-background-color: transparent;
 }
 
 .vbox {
@@ -150,4 +150,39 @@
 
 .hbox {
     -fx-animation: slideIn 0.6s ease-out 0.3s;
+}
+
+/* Logo placeholder style */
+.circle {
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.3), 8, 0, 0, 0);
+    /* margin-bottom for spacing below logo */
+}
+
+.hyperlink {
+    -fx-text-fill: #71C9CE;
+    -fx-font-size: 13px;
+    -fx-underline: true;
+    -fx-padding: 0 8 0 0;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #5AB8BD;
+}
+
+.button#registerButton {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #71C9CE;
+    -fx-border-color: #71C9CE;
+    -fx-border-radius: 8;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 32;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(113, 201, 206, 0.15), 3, 0, 0, 0);
+}
+
+.button#registerButton:hover {
+    -fx-background-color: #E3FDFD;
+    -fx-text-fill: #5AB8BD;
+    -fx-border-color: #5AB8BD;
 }
