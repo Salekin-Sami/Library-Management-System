@@ -4,35 +4,40 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="10" xmlns="http://javafx.com/javafx"
+<VBox alignment="TOP_CENTER" spacing="0" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml" fx:controller="com.library.controller.AddStudentDialogController"
-      stylesheets="@../css/styles.css">
+      style="-fx-background-color: white; -fx-background-radius: 18; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10), 12, 0, 0, 0);" minWidth="420">
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets top="0" right="0" bottom="0" left="0"/>
     </padding>
-    
-    <Label text="Add New Student" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    
-    <GridPane vgap="5" hgap="5">
-        <Label text="Student ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="studentIdField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        
-        <Label text="Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="nameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        
-        <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-        
-        <Label text="Contact Number:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <TextField fx:id="contactNumberField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-    </GridPane>
-    
-    <HBox spacing="10" alignment="CENTER">
-        <Button text="Generate Random" onAction="#handleGenerateRandom" styleClass="action-button"/>
+
+    <!-- App Bar/Header -->
+    <HBox style="-fx-background-color: #800020; -fx-background-radius: 0 0 0 0; -fx-padding: 28 32 18 32;" alignment="CENTER_LEFT" spacing="18">
+        <Label text="Add New Student" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
     </HBox>
-    
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Cancel" onAction="#handleCancel" styleClass="action-button"/>
-        <Button text="Add Student" onAction="#handleAddStudent" styleClass="primary-button"/>
+
+    <VBox spacing="18" style="-fx-padding: 28 32 18 32;">
+        <GridPane vgap="14" hgap="12" alignment="CENTER">
+            <Label text="Student ID:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14; -fx-text-fill: #1976D2; -fx-font-weight: bold;"/>
+            <TextField fx:id="studentIdField" GridPane.rowIndex="0" GridPane.columnIndex="1" promptText="e.g. 210101" style="-fx-background-radius: 8; -fx-background-color: #F5F7FA; -fx-padding: 8 12; -fx-font-size: 14;"/>
+
+            <Label text="Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-size: 14; -fx-text-fill: #1976D2; -fx-font-weight: bold;"/>
+            <TextField fx:id="nameField" GridPane.rowIndex="1" GridPane.columnIndex="1" promptText="Full Name" style="-fx-background-radius: 8; -fx-background-color: #F5F7FA; -fx-padding: 8 12; -fx-font-size: 14;"/>
+
+            <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-size: 14; -fx-text-fill: #1976D2; -fx-font-weight: bold;"/>
+            <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1" promptText="example@email.com" style="-fx-background-radius: 8; -fx-background-color: #F5F7FA; -fx-padding: 8 12; -fx-font-size: 14;"/>
+
+            <Label text="Contact Number:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-size: 14; -fx-text-fill: #1976D2; -fx-font-weight: bold;"/>
+            <TextField fx:id="contactNumberField" GridPane.rowIndex="3" GridPane.columnIndex="1" promptText="e.g. 017XXXXXXXX" style="-fx-background-radius: 8; -fx-background-color: #F5F7FA; -fx-padding: 8 12; -fx-font-size: 14;"/>
+        </GridPane>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Generate Random" onAction="#handleGenerateRandom" style="-fx-background-color: #43A047; -fx-text-fill: white; -fx-background-radius: 18; -fx-font-weight: bold; -fx-padding: 8 22; -fx-font-size: 14;"/>
+        </HBox>
+    </VBox>
+
+    <HBox spacing="14" alignment="CENTER_RIGHT" style="-fx-background-color: #F8F9FA; -fx-background-radius: 0 0 18 18; -fx-padding: 18 32 18 32;">
+        <Button text="Cancel" onAction="#handleCancel" style="-fx-background-color: #B0BEC5; -fx-text-fill: white; -fx-background-radius: 18; -fx-font-weight: bold; -fx-padding: 8 22; -fx-font-size: 14;"/>
+        <Button text="Add Student" onAction="#handleAddStudent" style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-background-radius: 18; -fx-font-weight: bold; -fx-padding: 8 22; -fx-font-size: 14;"/>
     </HBox>
-</VBox> 
+</VBox>
