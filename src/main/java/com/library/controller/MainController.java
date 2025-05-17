@@ -205,6 +205,9 @@ public class MainController {
                 }
             });
 
+            // Initialize borrowing filter dropdown
+            initializeBorrowingFilter();
+
             // Add listener for borrowing filter changes
             borrowingFilter.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -240,7 +243,7 @@ public class MainController {
         try {
             this.currentUser = user;
             if (welcomeLabel != null) {
-                welcomeLabel.setText("Welcome, " + user.getEmail() + " (" + user.getRole() + ")");
+                welcomeLabel.setText("Welcome, Sirajus Salekin Sami" + " (" + user.getRole() + ")");
             }
 
             // Setup tables and load data after user is set
@@ -1468,5 +1471,14 @@ public class MainController {
         studentsView.setVisible(false);
         borrowingsView.setVisible(false);
         requestsView.setVisible(true);
+    }
+
+    @FXML
+    private void initializeBorrowingFilter() {
+        if (borrowingFilter != null) {
+            borrowingFilter.getItems().clear();
+            borrowingFilter.getItems().addAll("All", "Borrowed", "Overdue", "Returned");
+            borrowingFilter.setValue("All");
+        }
     }
 }

@@ -72,6 +72,7 @@
                     </padding>
                     <HBox spacing="10">
                         <TextField fx:id="bookSearchField" promptText="Search books..." />
+                        <Button text="Search" onAction="#handleSearchBooks" />
                         <Button text="Add Book" onAction="#handleAddBook" />
                         <Button text="Edit Book" onAction="#handleEditBook" />
                         <Button text="Issue Book" onAction="#handleIssueBook" />
@@ -96,6 +97,7 @@
                     </padding>
                     <HBox spacing="10">
                         <TextField fx:id="studentSearchField" promptText="Search students..." />
+                        <Button text="Search" onAction="#handleSearchStudents" />
                         <Button text="Add Student" onAction="#handleAddStudent" />
                         <Button text="Edit Student" onAction="#handleEditStudent" />
                         <Button text="View History" onAction="#handleViewStudentHistory" />
@@ -118,6 +120,7 @@
                     </padding>
                     <HBox spacing="10">
                         <TextField fx:id="borrowingSearchField" promptText="Search borrowings..." />
+                        <Button text="Search" onAction="#handleSearchBorrowings" />
                         <ComboBox fx:id="borrowingFilter" promptText="Filter" />
                         <Button text="Return Book" fx:id="returnBookButton" onAction="#handleReturnBook" />
                         <Button text="Overdue Books" onAction="#handleOverdueBooks" />
@@ -176,6 +179,7 @@
     <bottom>
         <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="status-bar">
             <Text fx:id="statusText" styleClass="status-text" />
+            <Text text="Developed by Group 9, ICE-21 Batch" style="-fx-font-size: 12px; -fx-fill: #888;" />
         </HBox>
     </bottom>
 </BorderPane>
