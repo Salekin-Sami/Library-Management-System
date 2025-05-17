@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.PieChart;
+import java.util.Map;
 
 public class MainController {
     private final BookService bookService;
@@ -140,6 +141,8 @@ public class MainController {
     private BarChart<String, Number> statisticsBarChart;
     @FXML
     private PieChart booksPieChart;
+    @FXML
+    private BarChart<String, Number> booksByCategoryBarChart;
 
     public MainController() {
         this.bookService = new BookService();
@@ -537,6 +540,18 @@ public class MainController {
                     new PieChart.Data("Total Books", totalBooks),
                     new PieChart.Data("Borrowed Books", currentBorrowings),
                     new PieChart.Data("Overdue Books", overdueBooks));
+
+            // Populate BarChart for books per category
+            booksByCategoryBarChart.getData().clear();
+            List<Book> books = bookService.getAllBooks();
+            Map<String, Long> categoryCounts = books.stream()
+                    .collect(Collectors.groupingBy(Book::getCategory, Collectors.counting()));
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Books per Category");
+            for (Map.Entry<String, Long> entry : categoryCounts.entrySet()) {
+                series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+            booksByCategoryBarChart.getData().add(series);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to update statistics: " + e.getMessage(), Alert.AlertType.ERROR);

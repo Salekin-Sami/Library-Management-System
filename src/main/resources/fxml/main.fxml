@@ -180,29 +180,39 @@
                 <padding>
                     <Insets top="20" right="20" bottom="20" left="20"/>
                 </padding>
-                <GridPane hgap="20" vgap="20">
-                    <Label text="Total Books:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
-                    <Label fx:id="totalBooksLabel" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-                    
-                    <Label text="Total Students:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
-                    <Label fx:id="totalStudentsLabel" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-                    
-                    <Label text="Books Currently Borrowed:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
-                    <Label fx:id="currentBorrowingsLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-                    
-                    <Label text="Overdue Books:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
-                    <Label fx:id="overdueBooksLabel" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-                    
-                    <Label text="Total Unpaid Fines:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
-                    <Label fx:id="totalFinesLabel" GridPane.rowIndex="4" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-                </GridPane>
-
-                <Separator/>
-
-                <Label text="Recent Activities" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                <ListView fx:id="recentActivitiesList" VBox.vgrow="ALWAYS" prefHeight="200"/>
-                
-                <PieChart fx:id="booksPieChart" title="Books Overview" VBox.vgrow="ALWAYS"/>
+                <HBox spacing="30" alignment="CENTER" VBox.vgrow="ALWAYS">
+                    <!-- Left: Statistics Numbers -->
+                    <VBox spacing="16" alignment="TOP_LEFT">
+                        <GridPane hgap="20" vgap="20">
+                            <Label text="Total Books:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
+                            <Label fx:id="totalBooksLabel" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Total Students:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
+                            <Label fx:id="totalStudentsLabel" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Books Currently Borrowed:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
+                            <Label fx:id="currentBorrowingsLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Overdue Books:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
+                            <Label fx:id="overdueBooksLabel" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Total Unpaid Fines:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-size: 14px;"/>
+                            <Label fx:id="totalFinesLabel" GridPane.rowIndex="4" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                        </GridPane>
+                    </VBox>
+                    <!-- Right: Charts -->
+                    <HBox spacing="30" alignment="CENTER" HBox.hgrow="ALWAYS">
+                        <PieChart fx:id="booksPieChart" title="Books Overview"
+                                  prefWidth="350" prefHeight="350" minWidth="250" minHeight="250" maxWidth="500" maxHeight="500"/>
+                        <ScrollPane fitToWidth="true" fitToHeight="true" prefViewportWidth="600" prefViewportHeight="400">
+                            <BarChart fx:id="booksByCategoryBarChart" title="Books per Category"
+                                      prefWidth="800" prefHeight="400" minWidth="600" minHeight="300" maxWidth="1200" maxHeight="600">
+                                <xAxis>
+                                    <CategoryAxis label="Category" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Number of Books" />
+                                </yAxis>
+                            </BarChart>
+                        </ScrollPane>
+                    </HBox>
+                </HBox>
             </VBox>
         </Tab>
     </TabPane>

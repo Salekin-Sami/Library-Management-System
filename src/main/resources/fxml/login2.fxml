@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<DialogPane xmlns="http://javafx.com/javafx/17" 
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.library.controller.LoginController"
+           stylesheets="@../css/login.css"
+           prefWidth="400">
+    
+    <header>
+        <VBox alignment="CENTER" spacing="10">
+            <ImageView fitWidth="60" fitHeight="60" preserveRatio="true">
+                <image>
+                    <Image url="@../images/library-logo.png"/>
+                </image>
+            </ImageView>
+            <Text text="ICE Seminar Library" style="-fx-font-size: 28; -fx-font-weight: bold;"/>
+        </VBox>
+    </header>
+    
+    <content>
+        <VBox spacing="15" style="-fx-padding: 10 20 10 20;">
+            <!-- Email Field -->
+            <VBox spacing="5">
+                <Label text="Email" style="-fx-font-size: 13; -fx-text-fill: #555; -fx-font-weight: bold;"/>
+                <TextField fx:id="emailField" promptText="Enter your email"/>
+            </VBox>
+            
+            <!-- Password Field -->
+            <VBox spacing="5">
+                <Label text="Password" style="-fx-font-size: 13; -fx-text-fill: #555;"/>
+                <PasswordField fx:id="passwordField" promptText="Enter your password"/>
+            </VBox>
+            
+            <!-- Role Selection -->
+            <VBox spacing="5">
+                <Label text="Role" style="-fx-font-size: 13; -fx-text-fill: #555;"/>
+                <ComboBox fx:id="roleComboBox" promptText="Select your role"/>
+            </VBox>
+            
+            <!-- Remember Me & Forgot Password -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <CheckBox fx:id="rememberMeCheckbox" text="Remember me"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="forgotPasswordButton" text="Forgot Password?" 
+                        style="-fx-background-color: transparent; -fx-text-fill: #3498db; -fx-padding: 0; -fx-cursor: hand;"/>
+            </HBox>
+        </VBox>
+    </content>
+    
+    <buttonTypes>
+        <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
+        <ButtonType text="Login" buttonData="OK_DONE"/>
+    </buttonTypes>
+    
+    <!-- Loading Indicator (initially hidden) -->
+    <graphic>
+        <StackPane fx:id="loadingPane" visible="false">
+            <ProgressIndicator fx:id="loadingSpinner" progress="-1" style="-fx-progress-color: #3498db;" prefWidth="30" prefHeight="30"/>
+        </StackPane>
+    </graphic>
+</DialogPane>
