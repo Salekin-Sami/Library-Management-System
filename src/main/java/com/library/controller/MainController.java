@@ -584,8 +584,8 @@ public class MainController {
             // Populate PieChart
             booksPieChart.getData().clear();
             booksPieChart.getData().addAll(
-                    new PieChart.Data("Total Books", totalBooks),
-                    new PieChart.Data("Borrowed Books", currentBorrowings),
+                    new PieChart.Data("Available Books", totalBooks - currentBorrowings),
+                    new PieChart.Data("Borrowed Books", currentBorrowings - overdueBooks),
                     new PieChart.Data("Overdue Books", overdueBooks));
 
             // Populate BarChart for books per category

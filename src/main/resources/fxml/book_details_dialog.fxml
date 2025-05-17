@@ -10,79 +10,101 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.library.controller.BookDetailsDialogController"
-      style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"
-      spacing="20">
+      style="-fx-background-color: #FAFAFA; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 16, 0, 0, 0);"
+      spacing="0">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="0" right="0" bottom="0" left="0"/>
     </padding>
 
-    <!-- Header Section -->
-    <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10; -fx-padding: 15;">
-        <ImageView fx:id="coverImageView" fitWidth="150" fitHeight="200" preserveRatio="true" 
-                  style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);"/>
-        <VBox spacing="8" style="-fx-padding: 10;">
-            <Label fx:id="titleLabel" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-            <Label fx:id="authorLabel" style="-fx-font-size: 18; -fx-text-fill: #34495e;"/>
-            <Label fx:id="isbnLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="categoryLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="publisherLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="publicationYearLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="editionLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-            <Label fx:id="ratingLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
+    <!-- Material Design App Bar -->
+    <HBox style="-fx-background-color: #FFDDBA; -fx-padding: 24 32 16 32; -fx-background-radius: 0 0 0 0;" alignment="CENTER_LEFT" spacing="24">
+        <ImageView fx:id="coverImageView" fitWidth="120" fitHeight="160" preserveRatio="true"
+                   style="-fx-background-color: #FFF; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 4, 0, 0, 0);"/>
+        <VBox spacing="6">
+            <Label fx:id="titleLabel" style="-fx-font-size: 26; -fx-font-weight: bold; -fx-text-fill: white;" />
+            <Label fx:id="authorLabel" style="-fx-font-size: 16; -fx-text-fill: #3D0C02;" />
+            <HBox spacing="10">
+                <Label text="ISBN:" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #5B5484;"/>
+                <Label fx:id="isbnLabel" style="-fx-font-size: 13; -fx-text-fill: #5B5484;"/>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Category:" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #5B5484;"/>
+                <Label fx:id="categoryLabel" style="-fx-font-size: 13; -fx-text-fill: #5B5484;"/>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Publisher:" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #5B5484;"/>
+                <Label fx:id="publisherLabel" style="-fx-font-size: 13; -fx-text-fill: #5B5484;"/>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Year:" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #5B5484;"/>
+                <Label fx:id="publicationYearLabel" style="-fx-font-size: 13; -fx-text-fill: #5B5484;"/>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Edition:" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #5B5484;"/>
+                <Label fx:id="editionLabel" style="-fx-font-size: 13; -fx-text-fill: #5B5484;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Rating:" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #5B5484;"/>
+                <Label fx:id="ratingLabel" style="-fx-font-size: 15; -fx-text-fill: #FF0800;"/>
+            </HBox>
         </VBox>
     </HBox>
 
-    <!-- Description Section -->
-    <VBox spacing="8">
-        <Label text="Description" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-        <TextArea fx:id="descriptionArea" wrapText="true" editable="false" 
-                  style="-fx-background-color: #f8f9fa; -fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0; -fx-padding: 10; -fx-font-size: 14;"
-                  prefRowCount="4"/>
-    </VBox>
+    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+        <VBox spacing="24" style="-fx-padding: 32 32 24 32;">
+            <!-- Description Section -->
+            <VBox spacing="8">
+                <Label text="Description" style="-fx-font-size: 17; -fx-font-weight: bold; -fx-text-fill: #263238;"/>
+                <TextArea fx:id="descriptionArea" wrapText="true" editable="false"
+                          style="-fx-background-color: #F5F5F5; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E0E0E0; -fx-padding: 10; -fx-font-size: 14;"
+                          prefRowCount="4"/>
+            </VBox>
 
-    <!-- Copies Section -->
-    <VBox spacing="8">
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Book Copies" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-            <Label fx:id="totalCopiesLabel" style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-        </HBox>
-        <TableView fx:id="copiesTable" VBox.vgrow="ALWAYS" 
-                  style="-fx-background-color: transparent; -fx-table-cell-border-color: #e0e0e0; -fx-table-header-border-color: #3498db;">
-            <columns>
-                <TableColumn fx:id="copyNumberColumn" text="Copy #" prefWidth="100"/>
-                <TableColumn fx:id="locationColumn" text="Location" prefWidth="150"/>
-                <TableColumn fx:id="priceColumn" text="Price" prefWidth="100"/>
-                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
-                <TableColumn fx:id="createdAtColumn" text="Added Date" prefWidth="150"/>
-                <TableColumn fx:id="updatedAtColumn" text="Last Updated" prefWidth="150"/>
-            </columns>
-        </TableView>
-    </VBox>
+            <!-- Copies Section -->
+            <VBox spacing="8">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Book Copies" style="-fx-font-size: 17; -fx-font-weight: bold; -fx-text-fill: #263238;"/>
+                    <Label fx:id="totalCopiesLabel" style="-fx-font-size: 13; -fx-text-fill: #607D8B;"/>
+                </HBox>
+                <TableView fx:id="copiesTable" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: transparent; -fx-table-cell-border-color: #E0E0E0; -fx-table-header-border-color: #1976D2;">
+                    <columns>
+                        <TableColumn fx:id="copyNumberColumn" text="Copy #" prefWidth="90"/>
+                        <TableColumn fx:id="locationColumn" text="Location" prefWidth="120"/>
+                        <TableColumn fx:id="priceColumn" text="Price" prefWidth="90"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="90"/>
+                        <TableColumn fx:id="createdAtColumn" text="Added Date" prefWidth="120"/>
+                        <TableColumn fx:id="updatedAtColumn" text="Last Updated" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
 
-    <!-- Borrowing History Section -->
-    <VBox spacing="8">
-        <Label text="Borrowing History" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-        <TableView fx:id="borrowingHistoryTable" VBox.vgrow="ALWAYS"
-                  style="-fx-background-color: transparent; -fx-table-cell-border-color: #e0e0e0; -fx-table-header-border-color: #3498db;">
-            <columns>
-                <TableColumn fx:id="borrowingStudentColumn" text="Student" prefWidth="200"/>
-                <TableColumn fx:id="borrowingDateColumn" text="Borrowed Date" prefWidth="150"/>
-                <TableColumn fx:id="borrowingDueDateColumn" text="Due Date" prefWidth="150"/>
-                <TableColumn fx:id="borrowingReturnDateColumn" text="Return Date" prefWidth="150"/>
-                <TableColumn fx:id="borrowingFineColumn" text="Fine" prefWidth="100"/>
-            </columns>
-        </TableView>
-    </VBox>
+            <!-- Borrowing History Section -->
+            <VBox spacing="8">
+                <Label text="Borrowing History" style="-fx-font-size: 17; -fx-font-weight: bold; -fx-text-fill: #263238;"/>
+                <TableView fx:id="borrowingHistoryTable" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: transparent; -fx-table-cell-border-color: #E0E0E0; -fx-table-header-border-color: #1976D2;">
+                    <columns>
+                        <TableColumn fx:id="borrowingStudentColumn" text="Student" prefWidth="160"/>
+                        <TableColumn fx:id="borrowingDateColumn" text="Borrowed Date" prefWidth="110"/>
+                        <TableColumn fx:id="borrowingDueDateColumn" text="Due Date" prefWidth="110"/>
+                        <TableColumn fx:id="borrowingReturnDateColumn" text="Return Date" prefWidth="110"/>
+                        <TableColumn fx:id="borrowingFineColumn" text="Fine" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </ScrollPane>
 
-    <!-- Action Buttons -->
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="editButton" text="Edit Book" onAction="#handleEdit" 
-                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-font-weight: bold; -fx-font-size: 14;"/>
-        <Button fx:id="addCopyButton" text="Add Copy" onAction="#handleAddCopy" 
-                style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-font-weight: bold; -fx-font-size: 14;"/>
-        <Button fx:id="deleteButton" text="Delete Book" onAction="#handleDelete" 
-                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-font-weight: bold; -fx-font-size: 14;"/>
-        <Button fx:id="closeButton" text="Close" onAction="#handleClose" 
-                style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-font-weight: bold; -fx-font-size: 14;"/>
+    <!-- Material Design Button Bar (always visible) -->
+    <HBox spacing="18" alignment="CENTER_RIGHT" style="-fx-background-color: #FAFAFA; -fx-padding: 18 32 18 32; -fx-background-radius: 0 0 12 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 2, 0, 0, 0);">
+        <Button fx:id="editButton" text="Edit Book" onAction="#handleEdit"
+                style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-background-radius: 24; -fx-padding: 10 28; -fx-font-weight: bold; -fx-font-size: 15; -fx-effect: dropshadow(gaussian, #1976D2, 2, 0, 0, 0);"/>
+        <Button fx:id="addCopyButton" text="Add Copy" onAction="#handleAddCopy"
+                style="-fx-background-color: #43A047; -fx-text-fill: white; -fx-background-radius: 24; -fx-padding: 10 28; -fx-font-weight: bold; -fx-font-size: 15; -fx-effect: dropshadow(gaussian, #43A047, 2, 0, 0, 0);"/>
+        <Button fx:id="deleteButton" text="Delete Book" onAction="#handleDelete"
+                style="-fx-background-color: #E53935; -fx-text-fill: white; -fx-background-radius: 24; -fx-padding: 10 28; -fx-font-weight: bold; -fx-font-size: 15; -fx-effect: dropshadow(gaussian, #E53935, 2, 0, 0, 0);"/>
+        <Button fx:id="closeButton" text="Close" onAction="#handleClose"
+                style="-fx-background-color: #B0BEC5; -fx-text-fill: white; -fx-background-radius: 24; -fx-padding: 10 28; -fx-font-weight: bold; -fx-font-size: 15;"/>
     </HBox>
-</VBox> 
+</VBox>
