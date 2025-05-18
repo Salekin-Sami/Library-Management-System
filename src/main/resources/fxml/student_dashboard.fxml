@@ -101,6 +101,18 @@ The main layout for the student dashboard. It contains a tabbed pane with two ta
                 </TableView>
             </VBox>
         </Tab>
+        <!-- Recommended Books tab -->
+        <Tab text="Recommended Books" closable="false">
+            <VBox spacing="10">
+                <TableView fx:id="recommendedBooksTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="recommendedTitleColumn" text="Title" prefWidth="200"/>
+                        <TableColumn fx:id="recommendedAuthorColumn" text="Author" prefWidth="150"/>
+                        <TableColumn fx:id="recommendedStatusColumn" text="Status" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
         <!-- Chat tab -->
         <Tab text="Chat" closable="false">
             <VBox spacing="5" style="-fx-background-color: #f4f4f4;">

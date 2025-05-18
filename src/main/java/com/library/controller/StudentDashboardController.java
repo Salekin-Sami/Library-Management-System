@@ -86,6 +86,15 @@ public class StudentDashboardController {
     @FXML
     private AnchorPane chatView;
 
+    @FXML
+    private TableView<Book> recommendedBooksTable;
+    @FXML
+    private TableColumn<Book, String> recommendedTitleColumn;
+    @FXML
+    private TableColumn<Book, String> recommendedAuthorColumn;
+    @FXML
+    private TableColumn<Book, String> recommendedStatusColumn;
+
     private final BookService bookService;
     private final StudentService studentService;
     private final BorrowingService borrowingService;
@@ -111,6 +120,7 @@ public class StudentDashboardController {
             setupBooksTable();
             setupRequestsTable();
             setupBorrowingsTable();
+            setupRecommendedBooksTable(); // NEW: setup recommendations table
 
             // Add listeners to search fields
             // Clear search results when search field is empty
@@ -122,6 +132,7 @@ public class StudentDashboardController {
 
             // Load only books initially
             loadBooks();
+            loadRecommendedBooks(); // NEW: load recommendations
 
             // Chat setup
             if (chatListView != null) {
@@ -154,6 +165,7 @@ public class StudentDashboardController {
         if (currentStudent != null) {
             welcomeLabel.setText("Welcome, " + currentStudent.getName());
             loadInitialData();
+            loadRecommendedBooks(); // NEW
             // Update chatListView for the correct student after login
             if (chatListView != null) {
                 chatListView.setItems(ChatService.getMessagesForRecipient(currentStudent.getEmail()));
@@ -171,6 +183,7 @@ public class StudentDashboardController {
         this.currentStudent = student;
         welcomeLabel.setText("Welcome, " + student.getName());
         loadInitialData();
+        loadRecommendedBooks(); // NEW
         // Update chatListView for the correct student after switching
         if (chatListView != null) {
             chatListView.setItems(ChatService.getMessagesForRecipient(student.getEmail()));
@@ -475,10 +488,105 @@ public class StudentDashboardController {
         });
     }
 
+    private void setupRecommendedBooksTable() {
+        if (recommendedBooksTable == null)
+            return;
+        recommendedTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        recommendedAuthorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        recommendedStatusColumn.setCellValueFactory(cellData -> {
+            Book book = cellData.getValue();
+            long availableCopies = book.getCopies().stream()
+                    .filter(copy -> "Available".equals(copy.getStatus()))
+                    .count();
+            return new SimpleStringProperty(availableCopies > 0 ? "Available" : "Not Available");
+        });
+        // Double-click to show details
+        recommendedBooksTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Book selectedBook = recommendedBooksTable.getSelectionModel().getSelectedItem();
+                if (selectedBook != null) {
+                    showBookDetails(selectedBook);
+                }
+            }
+        });
+    }
+
+    private void loadRecommendedBooks() {
+        if (recommendedBooksTable == null || currentStudent == null)
+            return;
+        try {
+            List<Book> allBooks = bookService.getAllBooks();
+            List<Borrowing> borrowings = borrowingService.getStudentBorrowings(currentStudent.getId());
+            List<Long> borrowedBookIds = borrowings.stream()
+                    .map(b -> b.getBookCopy().getBook().getId())
+                    .toList();
+            List<BookRequest> requests = studentService.getStudentRequests(currentStudent.getId());
+            List<Long> requestedBookIds = requests.stream()
+                    .map(r -> r.getBook().getId())
+                    .toList();
+            // Exclude already borrowed/requested books
+            List<Book> notYetBorrowed = allBooks.stream()
+                    .filter(b -> !borrowedBookIds.contains(b.getId()) && !requestedBookIds.contains(b.getId()))
+                    .toList();
+
+            // 1. Favorite categories (by borrow count)
+            java.util.Map<String, Long> categoryCount = borrowings.stream()
+                    .map(b -> b.getBookCopy().getBook().getCategory())
+                    .filter(cat -> cat != null)
+                    .collect(
+                            java.util.stream.Collectors.groupingBy(cat -> cat, java.util.stream.Collectors.counting()));
+            List<String> favoriteCategories = categoryCount.entrySet().stream()
+                    .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+                    .map(java.util.Map.Entry::getKey)
+                    .toList();
+            List<Book> fromFavoriteCategories = notYetBorrowed.stream()
+                    .filter(b -> favoriteCategories.contains(b.getCategory()))
+                    .limit(3)
+                    .toList();
+
+            // 2. New arrivals (recently added)
+            List<Book> newArrivals = notYetBorrowed.stream()
+                    .sorted((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()))
+                    .filter(b -> !fromFavoriteCategories.contains(b))
+                    .limit(2)
+                    .toList();
+
+            // 3. Popular books (by borrow count)
+            List<Book> popularBooks = notYetBorrowed.stream()
+                    .filter(b -> !fromFavoriteCategories.contains(b) && !newArrivals.contains(b))
+                    .sorted((b1, b2) -> {
+                        int b2Count = (int) borrowingService.getBorrowingsByBook(b2.getId()).size();
+                        int b1Count = (int) borrowingService.getBorrowingsByBook(b1.getId()).size();
+                        return Integer.compare(b2Count, b1Count);
+                    })
+                    .limit(2)
+                    .toList();
+
+            // Combine, remove duplicates, and limit to 5
+            List<Book> recommendations = new java.util.ArrayList<>();
+            for (Book b : fromFavoriteCategories)
+                if (!recommendations.contains(b))
+                    recommendations.add(b);
+            for (Book b : newArrivals)
+                if (!recommendations.contains(b))
+                    recommendations.add(b);
+            for (Book b : popularBooks)
+                if (!recommendations.contains(b))
+                    recommendations.add(b);
+            if (recommendations.size() > 5)
+                recommendations = recommendations.subList(0, 5);
+
+            recommendedBooksTable.setItems(FXCollections.observableArrayList(recommendations));
+        } catch (Exception e) {
+            recommendedBooksTable.setItems(FXCollections.observableArrayList());
+        }
+    }
+
     private void loadInitialData() {
         loadBooks();
         loadRequests();
         loadBorrowings();
+        loadRecommendedBooks(); // NEW
     }
 
     private void loadBorrowings() {

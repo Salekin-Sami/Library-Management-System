@@ -5,6 +5,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
 ## Features
 
 ### Book Management
+
 - Add, edit, and delete books
 - Track multiple copies of books with individual status tracking
 - Search books by title, author, or ISBN
@@ -20,6 +21,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - Track book availability status
 
 ### Student Management
+
 - Add, edit, and delete students
 - View student details and borrowing history
 - Track student fines and payments
@@ -28,6 +30,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - View student borrowing history with detailed information
 
 ### Borrowing Management
+
 - Issue books to students
 - Return books with automatic fine calculation
 - Track overdue books
@@ -37,6 +40,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - Track borrowing status and history
 
 ### User Interface
+
 - Modern and intuitive JavaFX interface
 - Dark/Light theme support
 - Responsive design
@@ -50,6 +54,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
   - Total unpaid fines
 
 ### User Roles
+
 - Administrator (Librarian) access with full system control
 - Student access with limited functionality
 - Secure login system
@@ -57,6 +62,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - Role-based access control
 
 ### Additional Features
+
 - Book request system
 - Fine management system
 - Statistics and reporting
@@ -64,6 +70,11 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - About section with system information
 - Confirmation dialogs for important actions
 - Error handling and user notifications
+- **Personalized Book Recommendation System**: Students receive up to 5 book recommendations on their dashboard, combining:
+  - Books from their favorite categories (based on borrowing history)
+  - New arrivals (recently added books)
+  - Popular books (most borrowed by all students)
+  - Recommendations are unique and tailored for each student
 
 ## Technologies Used
 
@@ -80,6 +91,7 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - MySQL 8.0 or later
 
 ## Project GUI
+
 ![image](https://github.com/user-attachments/assets/06f31c3e-0e8d-4585-be2c-6748f78c7aa1)
 ![image](https://github.com/user-attachments/assets/fec5f169-a86e-4a81-920f-080971b20ceb)
 ![image](https://github.com/user-attachments/assets/21fb7cdf-392f-43fd-89e1-de7b46e12655)
@@ -87,10 +99,10 @@ A JavaFX-based library management system that helps librarians manage books, stu
 ![image](https://github.com/user-attachments/assets/ce4e3f32-60e1-4394-a9f0-e8612f096e05)
 ![image](https://github.com/user-attachments/assets/dc0f5561-1047-43d5-b216-e13e40d56511)
 
-
 ## Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/library-management-system.git
 ```
@@ -100,11 +112,13 @@ git clone https://github.com/yourusername/library-management-system.git
 3. Update the database configuration in `src/main/resources/hibernate.cfg.xml`
 
 4. Build the project:
+
 ```bash
 mvn clean install
 ```
 
 5. Run the application:
+
 ```bash
 mvn javafx:run
 ```
@@ -119,4 +133,4 @@ mvn javafx:run
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.

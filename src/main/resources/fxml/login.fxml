@@ -24,7 +24,7 @@
                         <Image url="@/css/ru.png"/>
                     </image>
                 </ImageView>
-                <Label fx:id="titleLabel" text="ICE Seminar Library" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #71C9CE; -fx-effect: dropshadow(gaussian, rgba(113,201,206,0.12), 3, 0, 0, 0);"/>
+                <Label fx:id="titleLabel" text="ICE Seminar Library" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #71C9CE; -fx-effect: dropshadow(gaussian, rgba(113,201,206,0.12), 3, 0, 0, 0); -fx-font-weight: bold;"/>
                 <Label fx:id="subtitleLabel" text="Sign in to your account" style="-fx-font-size: 15px; -fx-text-fill: #2C3E50; -fx-opacity: 0.7;"/>
                 <VBox spacing="12" alignment="CENTER">
                     <TextField fx:id="emailField" promptText="Email address" style="-fx-background-radius: 8; -fx-padding: 15 36 15 36; -fx-font-size: 14px;"/>

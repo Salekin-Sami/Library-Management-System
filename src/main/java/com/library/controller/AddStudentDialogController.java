@@ -126,6 +126,14 @@ public class AddStudentDialogController {
         contactNumberField.setText(student.getContactNumber());
     }
 
+    /**
+     * Validates the input in the add student dialog.
+     * Checks if all fields are filled, if the student ID already exists (only when adding new student),
+     * and if the email has a valid format.
+     * If any errors are found, an error alert is shown and the method returns false.
+     * Otherwise, it returns true.
+     * @return true if all input is valid, false otherwise
+     */
     private boolean validateInput() {
         StringBuilder errors = new StringBuilder();
 
