@@ -80,13 +80,26 @@ A JavaFX-based library management system that helps librarians manage books, stu
 - MySQL 8.0 or later
 
 ## Project GUI
-![image](https://github.com/user-attachments/assets/06f31c3e-0e8d-4585-be2c-6748f78c7aa1)
-![image](https://github.com/user-attachments/assets/fec5f169-a86e-4a81-920f-080971b20ceb)
-![image](https://github.com/user-attachments/assets/21fb7cdf-392f-43fd-89e1-de7b46e12655)
-![image](https://github.com/user-attachments/assets/37672fce-39a5-4c2d-aeff-499678eec05e)
-![image](https://github.com/user-attachments/assets/ce4e3f32-60e1-4394-a9f0-e8612f096e05)
-![image](https://github.com/user-attachments/assets/dc0f5561-1047-43d5-b216-e13e40d56511)
+![1](https://github.com/user-attachments/assets/5f060fde-9a12-496e-a7ad-a0921c2f143f)
+![mod1](https://github.com/user-attachments/assets/da90910c-c4d9-4905-91ef-7249bbe023f3)
+![6](https://github.com/user-attachments/assets/f9737020-7fe9-4398-9f67-d6d53eff40cb)
+![5](https://github.com/user-attachments/assets/4e64da3c-0984-42ea-b095-9d85d3c3d484)
+![4](https://github.com/user-attachments/assets/84bea674-a00b-4a7d-bca7-11926ce73314)
+![2](https://github.com/user-attachments/assets/f54e85b4-2278-45e1-a12b-d7456e02572e)
 
+
+# System Architecture
+
+![Screenshot 2025-05-18 112637](https://github.com/user-attachments/assets/a784ca9d-eb2f-40af-8324-cd5b83988cad)
+![Screenshot 2025-05-18 112145](https://github.com/user-attachments/assets/e5ce6633-eab3-4621-bdcc-042ce7ed9cb6)
+![Screenshot 2025-05-18 115017](https://github.com/user-attachments/assets/9fc83889-e011-4206-adff-f46f5a2e954b)
+![Screenshot 2025-05-18 114637](https://github.com/user-attachments/assets/37b36f51-bb2e-4e1c-b506-fd7d47c88d05)
+
+![Screenshot 2025-05-18 114422](https://github.com/user-attachments/assets/f336fc23-74c8-403e-bf37-f6ed6a477407)
+![Screenshot 2025-05-18 113644](https://github.com/user-attachments/assets/4a294a89-5867-47eb-9ec3-a65cad0bbebb)
+![Screenshot 2025-05-18 113418](https://github.com/user-attachments/assets/8b23484c-0d6e-447c-8183-81e66d213a2e)
+![Screenshot 2025-05-18 113129](https://github.com/user-attachments/assets/48032446-b162-4b23-898c-79b4bd80e9f7)
+![Screenshot 2025-05-18 112913](https://github.com/user-attachments/assets/ae059496-f9d2-4537-829a-90bd7df61b22)
 
 ## Setup
 
